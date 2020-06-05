@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
-
+use App\Models\Category;
 class CategoriesTableSeeder extends Seeder
 {
     /**
@@ -22,5 +22,6 @@ class CategoriesTableSeeder extends Seeder
             array('id' => '8','name' => 'Животные'),
             array('id' => '9','name' => 'Медицина'),
         ));
+        Factory(Category::class, 20)->create();
     }
 }

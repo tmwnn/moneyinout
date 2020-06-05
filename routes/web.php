@@ -53,8 +53,10 @@ Route::name('dashboard.')->group(function () {
     Route::prefix('/dashboard/')->middleware([
         'ShareCommonData', 'auth',
     ])->group(function () {
-        Route::any('/',  'Common\Dashboard\DashboardController@index')->name('index');
+        Route::get('/',  'Common\Dashboard\DashboardController@index')->name('index');
+        Route::post('/',  'Common\Dashboard\DashboardController@load')->name('index');
         Route::post('/store',  'Common\Dashboard\DashboardController@store')->name('store');
+        Route::post('/update',  'Common\Dashboard\DashboardController@update')->name('update');
+        Route::post('/delete',  'Common\Dashboard\DashboardController@delete')->name('delete');
     });
 });
-

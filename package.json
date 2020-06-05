@@ -24,9 +24,12 @@
         "vue-template-compiler": "^2.6.10"
     },
     "dependencies": {
+        "compass-mixins": "^0.12.10",
+        "font-awesome": "^4.7.0",
         "velocity-animate": "^1.5.2",
         "vue": "^2.6.11",
         "vue-confirm-dialog": "^0.2.5",
+        "vue-tables-2": "^2.0.29",
         "vue2-notify": "^1.4.0",
         "vuetify-toast-snackbar": "^0.6.1"
     }

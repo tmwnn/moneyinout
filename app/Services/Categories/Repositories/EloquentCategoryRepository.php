@@ -34,6 +34,23 @@ class EloquentCategoryRepository implements CategoryRepositoryInterface
     }
 
     /**
+     * Поиск и выдача резултата по таблице категорий
+     * @param string $name фильтр по наименованию категорий
+     * @return array
+     */
+    public function searchByUser(int $userId = null)
+    {
+        $userCategories = collect([]);
+        if ($userId) {
+            $userCategories = Category::where('user_id', $userId)->get();
+        }
+        $categories = Category::whereNull('user_id')->get();
+        $categories->merge($userCategories);
+
+        return $categories->toArray();
+    }
+
+    /**
      * Создание записи
      * @param array $data
      * @return Category

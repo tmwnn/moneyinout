@@ -6,91 +6,156 @@
     <div class="container">
 
         <div class="tab-pane mb-2">
-            <a class="btn btn-primary btn-lg" href="javascript:void(0);" role="button" @click="add = 1;">@lang('main.add')</a>
-            <a class="btn btn-primary btn-lg" href="{{ route('dashboard.index') }}" role="button">@lang('main.refresh')</a>
-            {{ Form::open(array('url' => route('dashboard.index'), 'class' => 'btn')) }}
-            {{ Form::text('search', $search) }}
-            {{ Form::submit(__('main.search')) }}
-            {{ Form::close() }}
-        </div>
-        <div v-if="add" class="mb-2">
-            <div class="form-group">
-                {{ Form::label(__('main.field_name')) }}
-                {{ Form::text('name', '',  ['ref' => 'comment_0', 'class' => 'form-control']) }}
-            </div>
-            <div class="form-group">
-                {{ Form::label(__('main.field_price')) }}
-                {{ Form::text('summ', '',  ['ref' => 'summ_0', 'class' => 'form-control']) }}
-            </div>
-            <div class="form-group">
-                <a class="btn btn-success" href="javascript:void(0);" @click="save('{{ route('dashboard.store') }}', '0', ['name','summ'])">@lang('main.save')</a>
-                <a class="btn btn-info" href="javascript:void(0);" @click="add = 0">@lang('main.cancel')</a>
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" placeholder="Что ищем" aria-label="Что ищем" aria-describedby="basic-addon2" v-model="searchString">
+                <div class="input-group-append">
+                    <button class="input-group-text fa  fa-search" @click="load" title="Найти">&nbsp;</button>
+                </div>
+                <div class="input-group-append">
+                    <button class="input-group-text fa  fa-close" @click="searchString = '';load();" title="Очистить">&nbsp;</button>
+                </div>
+                <div class="input-group-append">
+                    <button class="input-group-text fa fa-cog" title="Расширенный поиск">&nbsp;</button>
+                </div>
             </div>
         </div>
 
-        <div class="table-responsive">
-            <table class="table table-striped  table-bordered">
+        <div class="row mb-2" v-cloak>
+            <div class="col">Сумма: @{{ summ }}</div>
+            {{--
+            <div class="col">За последний месяц: @{{ summ }}</div>
+            <div class="col">За последнюю неделю: @{{ summ }}</div>
+            --}}
+            <div class="col">
+                <button class="ml-1 btn btn-info float-right fa fa-2x fa-line-chart" aria-hidden="true"></button>
+                <button class="btn btn-info active float-right fa fa-2x fa-table" aria-hidden="true"></button>
+            </div>
+        </div>
+
+        <div class="table-responsive" v-cloak>
+
+            <table class="rwd-table" v-if="!!operations.data">
                 <thead>
                 <tr>
                     {{--<th scope="col">Id</th>--}}
                     <th scope="col">Дата</th>
                     <th scope="col">Сумма</th>
+                    <th scope="col">Категория</th>
                     <th scope="col">Комментарий</th>
-                    {{--<th scope="col">Действие</th>--}}
+                    <th scope="col">Тэги</th>
+                    <th scope="col">Действие</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tbody>
-                @foreach($incomes as $item)
                     <tr>
+                        <td data-th="Дата">
+                            <input type="text" class="form-control" v-model="newItem.date"/>
+                        </td>
+                        <td data-th="Сумма">
+                            <input type="text" class="form-control" v-model="newItem.summ"/>
+                        </td>
+                        <td data-th="Категория">
+                            <input type="text" class="form-control" v-model="newItem.category_id"/>
+                        </td>
+                        <td data-th="Комментарий">
+                            <input type="text" class="form-control"  v-model="newItem.comment"/>
+                        </td>
+                        <td data-th="Тэги">
+                            <input type="text" class="form-control"/>
+                        </td>
+                        <td>
+                            <a href="javascript:void(0);" @click="saveRow()" class="text-success fa fa-2x fa-save" title="Добавить"></a>
+                            <a href="javascript:void(0);" class="ml-1 text-danger fa fa-2x fa-trash" title="Очистить"></a>
+                        </td>
+                    </tr>
+                    <tr v-for="item in operations.data" v-on:dblclick="editRow(item.id)">
                         {{--<td>{{ $item->id }}</td>--}}
-                        <td>
-                            <template v-if="edit != '{{ $item->id }}'">
-                                {{ $item->date }}
+                        <td data-th="Дата">
+                            <template v-if="edit != item.id">
+                                @{{ item.date }}
                             </template>
                             <template v-else>
-                                {{ Form::text('date', $item->date, ['ref' => 'name_' .  $item->id]) }}
+                                <input type="text" class="form-control" v-model="editItem.date" />
                             </template>
                         </td>
-                        <td>
-                            <template v-if="edit != '{{ $item->id }}'">
-                                {{ $item->summ }}
+                        <td data-th="Сумма">
+                            <template v-if="edit != item.id">
+                                @{{ item.summ }}
                             </template>
                             <template v-else>
-                                {{ Form::text('summ', $item->name, ['ref' => 'summ_' .  $item->id]) }}
+                                <input type="text" class="form-control" v-model="editItem.summ" />
                             </template>
                         </td>
-                        <td>
-                            <template v-if="edit != '{{ $item->id }}'">
-                                {{ $item->comment }}
+                        <td data-th="Категория">
+                            <template v-if="edit != item.id">
+                                @{{ categoriesAssoc[item.category_id] }}
                             </template>
                             <template v-else>
-                                {{ Form::text('comment', $item->comment, ['ref' => 'name_' .  $item->id]) }}
+                                <input type="text" class="form-control" v-model="editItem.category_id" />
+                            </template>
+                        </td>
+                        <td data-th="Комментарий">
+                            <template v-if="edit != item.id">
+                                @{{ item.comment }}
+                            </template>
+                            <template v-else>
+                                <input type="text" class="form-control" v-model="editItem.comment"/>
+                            </template>
+                        </td>
+                        <td data-th="Тэги">
+                            <template v-if="edit != item.id">
+
+                            </template>
+                            <template v-else>
+                                <input type="text" class="form-control" name="tags" />
                             </template>
                         </td>
 
-                        {{--
-                        <td>
-                            <template v-if="edit != '{{ $item->id }}'">
-                                <a href="javascript:void(0);" @click="edit = '{{ $item->id }}'" class="btn btn-info">Изменить</a>
-                                <a href="javascript:void(0);" @click.stop.prevent="remove('{{ route('cms.currencies.delete') }}', '{{ $item->id }}')" class="btn btn-danger">Удалить</a>
+
+                        <td data-th="Действие">
+                            <template v-if="edit != item.id">
+                                <a href="javascript:void(0);" @click="editRow(item.id)" class="text-info fa fa-edit fa-2x" title="Изменить"></a>
+                                <a href="javascript:void(0);" @click.stop.prevent="remove('{{ route('dashboard.delete') }}', item.id)"
+                                   class="ml-1 text-danger fa fa-2x fa-trash" title="Удалить"></a>
                             </template>
                             <template v-else>
-                                <a href="javascript:void(0);" @click="save('{{ route('cms.currencies.update') }}', '{{ $item->id }}', ['code'])" class="btn btn-success" >Сохранить</a>
-                                <a href="javascript:void(0);" @click="edit = 0" class="btn btn-info" >Отмена</a>
+                                <a href="javascript:void(0);" @click="saveRow('{{ route('dashboard.update') }}', item.id)"
+                                   class="text-success fa fa-2x fa-save" title="Сохранить"></a>
+                                <a href="javascript:void(0);" @click="edit = 0" class="ml-1 fa fa-2x fa-mail-reply" title="Отмена"></a>
                             </template>
                         </td>
-                        --}}
+
                     </tr>
-                @endforeach
+
                 </tbody>
             </table>
 
-            {{ $incomes->links() }}
+            {{-- $incomes->links() --}}
+            <nav>
+                <ul class="pagination">
+                    <li class="page-item" v-if="operations.current_page > 1"><a href="javascript:void(0);" class="page-link" v-on:click.prevent="setPage(1);">&laquo;</a></li>
+                    <li class="page-item" v-if="operations.current_page > 3"><a href="javascript:void(0);" class="page-link" v-on:click.prevent="setPage(1);">1</a></li>
+                    <li class="page-item" v-if="operations.current_page > 3"><a href="javascript:void(0);" class="page-link">...</a></li>
+                    <li class="page-item" v-if="operations.current_page > 2"><a href="javascript:void(0);" class="page-link" v-on:click.prevent="setPage(operations.current_page - 2);">@{{ operations.current_page - 2 }}</a></li>
+                    <li class="page-item" v-if="operations.current_page > 1"><a href="javascript:void(0);" class="page-link" v-on:click.prevent="setPage(operations.current_page - 1);">@{{ operations.current_page - 1 }}</a></li>
+                    <li class="page-item active"><a href="javascript:void(0);" class="page-link active" v-on:click.prevent="setPage(operations.current_page);">@{{ operations.current_page }}</a></li>
+                    <li class="page-item" v-if="operations.current_page < operations.last_page - 1"><a href="javascript:void(0);" class="page-link" v-on:click.prevent="setPage(operations.current_page + 1);">@{{ operations.current_page + 1 }}</a></li>
+                    <li class="page-item" v-if="operations.current_page < operations.last_page - 2"><a href="javascript:void(0);" class="page-link" v-on:click.prevent="setPage(operations.current_page + 2);">@{{ operations.current_page + 2 }}</a></li>
+                    <li class="page-item" v-if="operations.current_page < operations.last_page - 3"><a href="javascript:void(0);" class="page-link">...</a></li>
+                    <li class="page-item" v-if="operations.current_page < operations.last_page"><a href="javascript:void(0);" class="page-link" v-on:click.prevent="setPage(operations.last_page);">@{{ operations.last_page }}</a></li>
+                    <li class="page-item" v-if="operations.current_page < operations.last_page"><a href="javascript:void(0);" class="page-link" v-on:click.prevent="setPage(operations.last_page);">&raquo;</a></li>
+                </ul>
+            </nav>
+
         </div>
 
-        <div class="row">
-            @lang('main.summ'): {{ $summ }}
-        </div>
+
     </div>
 @endsection
+
+@push('scripts')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js" type="text/javascript"></script>
+    <script>
+        var loadUrl = '{{ route('dashboard.index') }}';
+    </script>
+@endpush

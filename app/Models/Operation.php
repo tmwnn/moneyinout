@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * App\Models\Operation
@@ -30,7 +31,9 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Operation extends Model
 {
+    use SoftDeletes;
     public $fillable = ['id', 'date', 'summ', 'comment', 'category_id', 'search', 'type', 'user_id'];
+    protected $perPage = 10;
 
     public function category() {
         return $this->hasOne('App\Models\Category','id', 'category_id');

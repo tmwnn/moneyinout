@@ -13,6 +13,8 @@ interface CachedCategoryRepositoryInterface
 
     public function searchByNames(string $name);
 
+    public function searchByUser(int $userId);
+
     public function clearSearchCache();
 
     public function find(int $id);

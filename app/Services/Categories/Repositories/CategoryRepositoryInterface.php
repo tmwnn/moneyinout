@@ -12,6 +12,8 @@ interface CategoryRepositoryInterface
 
     public function searchByNames(string $name = '');
 
+    public function searchByUser(int $userId = null);
+
     public function createFromArray(array $data);
 
     public function updateFromArray(int $id, array $data);

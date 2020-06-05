@@ -21,7 +21,7 @@ class EloquentOperationRepository implements OperationRepositoryInterface
     {
         $Operations = Operation::where('user_id', $userId);
         if ($search) {
-            $Operations->where('comment', 'like', '%' . $search . '%');
+            $Operations->where('search', 'like', '%' . $search . '%');
         }
         return $Operations->orderBy('id', 'desc')->paginate();
     }
@@ -35,7 +35,7 @@ class EloquentOperationRepository implements OperationRepositoryInterface
     {
         $Operations = Operation::where('user_id', $userId);
         if ($search) {
-            $Operations->where('comment', 'like', '%' . $search . '%');
+            $Operations->where('search', 'like', '%' . $search . '%');
         }
         return $Operations->sum('summ');
     }

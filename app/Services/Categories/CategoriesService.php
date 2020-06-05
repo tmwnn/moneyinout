@@ -57,6 +57,17 @@ class CategoriesService
     }
 
     /**
+     * Поиск и выдача резултата по таблице
+     * @param integer $userId фильтр по наименованию
+     * @param string $name фильтр по наименованию
+     */
+    public function searchByUser($userId): array
+    {
+        return $this->cachedRepository->searchByUser($userId);
+    }
+
+
+    /**
      * Создание
      * @param array $data
      * @return Category

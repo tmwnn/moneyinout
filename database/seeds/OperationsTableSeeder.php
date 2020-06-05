@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Operation;
 use Illuminate\Database\Seeder;
 
 class OperationsTableSeeder extends Seeder
@@ -16,5 +17,6 @@ class OperationsTableSeeder extends Seeder
             array('id' => '2','date' => '2020-06-01', 'summ' => 900, 'comment' => 'Тусовка на реп. точке', 'search' => 'Развлечения: Тусовка на реп. точке', 'category_id' => 6, 'user_id' => 1),
             array('id' => '3','date' => '2020-06-01', 'summ' => 12000, 'comment' => 'Кредит', 'search' => 'Авто: кредит', 'category_id' => 5, 'user_id' => 1),
         ));
+        Factory(Operation::class, 50)->create();
     }
 }

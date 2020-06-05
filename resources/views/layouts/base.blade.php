@@ -8,7 +8,7 @@
 
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
-    <link rel="stylesheet" href="{{ mix('css/app.css') }}">
+    <link rel="stylesheet" href=/css/app.css?{{ date('YmdHis') }}">
     @yield('styles')
 </head>
 <body>
@@ -20,9 +20,8 @@
 </div>
 
 {{--@include('blocks.footer.index')--}}
-
-<script src="{{ mix('/js/app.js') }}"></script>
 @stack('scripts')
+<script src="/js/app.js?{{ date('YmdHis') }}"></script>
 
 </body>
 </html>

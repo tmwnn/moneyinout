@@ -58,6 +58,19 @@ class CachedCategoryRepository implements CachedCategoryRepositoryInterface
         });
     }
 
+    public function searchByUser(int $userId)
+    {
+        if (1 || request()->get('no_cache')) {
+            return $this->categoryRepository->searchByUser($userId);
+        }
+        $key = $this->cacheKeyManager->getSearchCategoriesKey(['userId' => $userId]);
+        return Cache::tags([Tag::CMS, Tag::CATEGORIES])
+            ->remember($key, 1800, function () use ($userId) {
+                return $this->categoryRepository->searchByUser($userId);
+            });
+    }
+
+
     public function clearSearchCache()
     {
         Cache::tags([Tag::CMS, Tag::CATEGORIES])->flush();
