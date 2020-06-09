@@ -15,9 +15,9 @@ interface OperationRepositoryInterface
     public function createFromArray(array $data);
 
     public function getUsersIds();
-    /*
+
     public function updateFromArray(int $id, array $data);
 
     public function delete(int $id);
-    */
+
 }

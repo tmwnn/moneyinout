@@ -9,11 +9,16 @@ import Vue from 'vue';
 import axios from "axios/index";
 import Notify from 'vue2-notify';
 import VueConfirmDialog from "vue-confirm-dialog";
+import DatePicker from 'vue2-datepicker-yi-bootstrap';
 //import {ServerTable, ClientTable, Event} from 'vue-tables-2';
+import vSelect from 'vue-select'
+
+import 'vue-select/dist/vue-select.css';
 
 Vue.use(Notify, {position: 'top-right'});
 Vue.use(VueConfirmDialog);
 
+//Vue.component('v-select', vSelect)
 window.Vue = require('vue');
 
 /**
@@ -37,6 +42,10 @@ Vue.component('example-component', require('./components/ExampleComponent.vue').
 
 const App = new Vue({
     el: '#app',
+    components: {
+        'date-picker': DatePicker,
+        'v-select': vSelect,
+    },
     data: {
         add: 0,
         edit: 0,
@@ -55,7 +64,7 @@ const App = new Vue({
             'comment'
         ],
         newItem: {
-            date: '',
+            date: typeof(curDate) !== "undefined" ? curDate : new Date().toISOString().substring(0,10),
             summ: 0,
             comment: '',
             category_id: 0,
@@ -75,16 +84,58 @@ const App = new Vue({
             });
             return data;
         },
+        categoriesSelect: function() {
+            let data = [];
+            this.categories.forEach((item) => {
+                data.push({label: item.name, code: item.id});
+            });
+            return data;
+        },
+        xNewDate: {
+            get: function () {
+                return this.newItem.date;
+            },
+            set: function (value) {
+                let dateStr = new Date(value).toISOString().substring(0,10);
+                this.newItem.date = dateStr;
+            }
+        },
+        xEditDate: {
+            get: function () {
+                return this.editItem.date;
+            },
+            set: function (value) {
+                let dateStr = new Date(value).toISOString().substring(0,10);
+                this.editItem.date = dateStr;
+            }
+        },
+        xNewCategory: {
+            get: function () {
+                return this.categoriesAssoc[this.newItem.category_id];
+            },
+            set: function (value) {
+                this.newItem.category_id = value.code;
+            },
+        },
+        xEditCategory: {
+            get: function () {
+                return this.categoriesAssoc[this.editItem.category_id];
+            },
+            set: function (value) {
+                this.editItem.category_id = value.code;
+            },
+        },
     },
     methods: {
         load: function () {
+            this.edit = 0;
             axios.post(loadUrl, {search: this.searchString, page: this.page,})
                 .then((response) => {
                     this.operations = response.data.operations;
                     this.summ = response.data.summ;
                     this.page = response.data.operations.current_page;
                     this.categories = response.data.categories;
-                    console.log(response.data);
+                    //console.log(response.data);
                 })
                 .catch(function (error) {
                     console.log(error.response);
@@ -114,6 +165,12 @@ const App = new Vue({
             axios.post(url, this.editItem)
                 .then((response) => {
                     if (this.checkResult(response.data)) {
+                        this.newItem = {
+                            date: curDate,
+                            summ: 0,
+                            comment: '',
+                            category_id: 0,
+                        };
                         this.load();
                     }
                 })
@@ -163,9 +220,36 @@ const App = new Vue({
                 }
             );
         },
+        removeRow: function (url, id) {
+            this.$vueConfirm.confirm(
+                {
+                    auth: false,
+                    message: 'Вы уверены?',
+                    button: {
+                        no: 'Нет',
+                        yes: 'Да'
+                    }
+                },
+                (confirm) => {
+                    if (confirm == true) {
+                        axios.post(url, {id: id})
+                            .then((response) => {
+                                if (this.checkResult(response.data)) {
+                                    this.load();
+                                }
+                            })
+                            .catch(function (error) {
+                                console.log(error.response);
+                                Vue.$notify(error.response.data.message, 'error');
+                            })
+                        ;
+                    }
+                }
+            );
+        },
         editRow: function (id) {
             this.operations.data.forEach((row) => {
-                console.log(id, row);
+                //console.log(id, row);
                 if (row.id == id) {
                     this.editItem = row;
                 }
@@ -182,7 +266,16 @@ const App = new Vue({
         setPage: function (page) {
             this.page = page;
             this.load();
-        }
+        },
+        dateConvert: function (dateStr) {
+            let a = dateStr.split('-');
+            if (a.length == 3) {
+                return a[2] + '.' + a[1] + '.' + a[0];
+            } else {
+                return dateStr;
+            }
+
+        },
     },
     created: function () {
         if (typeof(loadUrl) !== 'undefined') {

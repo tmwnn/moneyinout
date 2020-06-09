@@ -1,6 +1,6 @@
 <?php
 /**
- * Хэндлер для добавления
+ * Хэндлер для изменения категорий
  */
 
 namespace App\Services\Operations\Handlers;
@@ -11,9 +11,9 @@ use App\Models\Operation;
 use App\Services\Operations\Repositories\OperationRepositoryInterface;
 use Carbon\Carbon;
 
-class CreateOperationHandler
+class UpdateOperationHandler
 {
-    /** @var OperationRepositoryInterface  */
+
     private $operationRepository;
 
     public function __construct(
@@ -24,23 +24,16 @@ class CreateOperationHandler
     }
 
     /**
+     * @param int $id
      * @param array $data
      * @return Operation
      */
-    public function handle(array $data): Operation
+    public function handle(int $id, array $data): Operation
     {
-        $data['user_id'] = \Auth::user()->id;
         $catName = Category::find($data['category_id'])->name ?? '';
         $data['comment'] = $data['comment'] ?? '';
         $data['search'] = $catName . ': ' . $data['comment'];
-        return $this->operationRepository->createFromArray($data);
+        return $this->operationRepository->updateFromArray($id, $data);
     }
 
-    /**
-     * @return array
-     */
-    public function getUsers(): array
-    {
-        return $this->operationRepository->getUsers();
-    }
 }

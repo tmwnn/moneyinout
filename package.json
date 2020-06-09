@@ -29,7 +29,10 @@
         "velocity-animate": "^1.5.2",
         "vue": "^2.6.11",
         "vue-confirm-dialog": "^0.2.5",
+        "vue-select": "^3.10.3",
         "vue-tables-2": "^2.0.29",
+        "vue2-datepicker": "^3.6.0",
+        "vue2-datepicker-yi-bootstrap": "^2.12.11",
         "vue2-notify": "^1.4.0",
         "vuetify-toast-snackbar": "^0.6.1"
     }

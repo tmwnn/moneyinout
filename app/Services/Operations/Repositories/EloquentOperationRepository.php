@@ -60,4 +60,31 @@ class EloquentOperationRepository implements OperationRepositoryInterface
         return $users;
     }
 
+    /**
+     * Изменение записи
+     * @param int $id
+     * @param array $data
+     * @return Operation
+     */
+    public function updateFromArray($id, array $data)
+    {
+        $category = $this->find($id);
+        $category->update($data);
+        return $category;
+    }
+
+    /**
+     * Удаление записи
+     * @param int $id
+     * @return mixed
+     */
+    public function delete($id)
+    {
+        return Operation::where('id', $id)->delete();
+    }
+
+    public function find(int $id)
+    {
+        return Operation::find($id);
+    }
 }

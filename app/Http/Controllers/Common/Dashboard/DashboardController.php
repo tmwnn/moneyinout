@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Common\Dashboard;
 
+use App\Http\Controllers\Cms\Categories\Requests\DeleteCategoryRequest;
+use App\Http\Controllers\Cms\Categories\Requests\UpdateCategoryRequest;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Common\Dashboard\Requests\StoreOperationRequest;
 
@@ -91,13 +93,55 @@ class DashboardController extends Controller
             $country = $this->operationsService->store($request->all());
 
         } catch (\Exception $e) {
-            \Log::channel('error')->error(__METHOD__ . ': ' . $e->getMessage());
+            //\Log::channel('error')->error(__METHOD__ . ': ' . $e->getMessage());
             return response()->json([
                 'message' => 'Store error',
+                'errors' => [[$e->getMessage()]],
+            ], 400)->send();
+        }
+        return response()->json($country, 200)->send();
+    }
+
+    /**
+     * Изменение
+     *
+     * @param Request $request
+     * @return string
+     */
+    public function update(Request $request): string
+    {
+        $id = (int)$request->get('id', 0);
+        try {
+            $category = $this->operationsService->update($id, $request->all());
+        } catch (\Exception $e) {
+            //\Log::channel('error')->error(__METHOD__ . ': ' . $e->getMessage());
+            return response()->json([
+                'message' => 'Update error',
                 'errors' => [[ $e->getMessage() ]],
             ], 400)->send();
         }
-        return response()->json($country,200)->send();
+        return json_encode($category);
     }
 
+
+    /**
+     * Удаление
+     *
+     * @param Request $request
+     * @return string
+     */
+    public function delete(Request $request): string
+    {
+        $id = $request->get('id');
+        try {
+            $this->operationsService->delete($id);
+        } catch (\Exception $e) {
+            //\Log::channel('error')->error(__METHOD__ . ': ' . $e->getMessage());
+            return response()->json([
+                'message' => 'Delete error',
+                'errors' => [[ $e->getMessage() ]],
+            ], 400)->send();
+        }
+        return json_encode([]);
+    }
 }

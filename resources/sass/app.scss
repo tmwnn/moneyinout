@@ -89,4 +89,16 @@ $breakpoint-alpha: 480px; // adjust to your needs
     th, td:before {
         /*color: #dd5;*/
     }
+    .mx-input-append {
+        height: auto !important;
+    }
+    .cell {
+        display: table-cell;
+    }
+    td.summ {
+        width: 110px;
+    }
+    td.date {
+        width: 150px;
+    }
 }

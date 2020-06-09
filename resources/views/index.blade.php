@@ -49,13 +49,14 @@
                 <tbody>
                     <tr>
                         <td data-th="Дата">
-                            <input type="text" class="form-control" v-model="newItem.date"/>
+                            <date-picker v-model="xNewDate" :format="'DD.MM.YYYY'"></date-picker>
                         </td>
                         <td data-th="Сумма">
                             <input type="text" class="form-control" v-model="newItem.summ"/>
                         </td>
                         <td data-th="Категория">
-                            <input type="text" class="form-control" v-model="newItem.category_id"/>
+                           {{-- <input type="text" class="form-control" v-model="newItem.category_id"/>--}}
+                            <v-select :options="categoriesSelect" v-model="xNewCategory" :clearable="false"></v-select>
                         </td>
                         <td data-th="Комментарий">
                             <input type="text" class="form-control"  v-model="newItem.comment"/>
@@ -64,23 +65,23 @@
                             <input type="text" class="form-control"/>
                         </td>
                         <td>
-                            <a href="javascript:void(0);" @click="saveRow()" class="text-success fa fa-2x fa-save" title="Добавить"></a>
+                            <a href="javascript:void(0);" @click="storeRow('{{ route('dashboard.store') }}')" class="text-success fa fa-2x fa-save" title="Добавить"></a>
                             <a href="javascript:void(0);" class="ml-1 text-danger fa fa-2x fa-trash" title="Очистить"></a>
                         </td>
                     </tr>
-                    <tr v-for="item in operations.data" v-on:dblclick="editRow(item.id)">
+                    <tr v-for="item in operations.data" v-on:dblclick="editRow(item.id)" v-bind:class="{'text-success': item.summ > 0}">
                         {{--<td>{{ $item->id }}</td>--}}
-                        <td data-th="Дата">
+                        <td data-th="Дата" class="date">
                             <template v-if="edit != item.id">
-                                @{{ item.date }}
+                                <span @click="newItem.date = item.date">@{{ dateConvert(item.date) }}</span>
                             </template>
                             <template v-else>
-                                <input type="text" class="form-control" v-model="editItem.date" />
+                               <date-picker v-model="xEditDate" :format="'DD.MM.YYYY'"></date-picker>
                             </template>
                         </td>
-                        <td data-th="Сумма">
+                        <td data-th="Сумма" class="summ">
                             <template v-if="edit != item.id">
-                                @{{ item.summ }}
+                                <span @click="newItem.summ = item.summ">@{{ item.summ }}</span>
                             </template>
                             <template v-else>
                                 <input type="text" class="form-control" v-model="editItem.summ" />
@@ -88,15 +89,15 @@
                         </td>
                         <td data-th="Категория">
                             <template v-if="edit != item.id">
-                                @{{ categoriesAssoc[item.category_id] }}
+                                <span @click="newItem.category_id = item.category_id">@{{ categoriesAssoc[item.category_id] }}</span>
                             </template>
                             <template v-else>
-                                <input type="text" class="form-control" v-model="editItem.category_id" />
+                                <v-select :options="categoriesSelect" v-model="xEditCategory" :clearable="false"></v-select>
                             </template>
                         </td>
                         <td data-th="Комментарий">
                             <template v-if="edit != item.id">
-                                @{{ item.comment }}
+                                <span @click="newItem.comment = item.comment">@{{ item.comment }}</span>
                             </template>
                             <template v-else>
                                 <input type="text" class="form-control" v-model="editItem.comment"/>
@@ -115,7 +116,7 @@
                         <td data-th="Действие">
                             <template v-if="edit != item.id">
                                 <a href="javascript:void(0);" @click="editRow(item.id)" class="text-info fa fa-edit fa-2x" title="Изменить"></a>
-                                <a href="javascript:void(0);" @click.stop.prevent="remove('{{ route('dashboard.delete') }}', item.id)"
+                                <a href="javascript:void(0);" @click.stop.prevent="removeRow('{{ route('dashboard.delete') }}', item.id)"
                                    class="ml-1 text-danger fa fa-2x fa-trash" title="Удалить"></a>
                             </template>
                             <template v-else>
@@ -157,5 +158,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js" type="text/javascript"></script>
     <script>
         var loadUrl = '{{ route('dashboard.index') }}';
+        var curDate = '{{ date('Y-m-d') }}';
     </script>
 @endpush
