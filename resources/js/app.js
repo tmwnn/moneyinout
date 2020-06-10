@@ -74,7 +74,15 @@ const App = new Vue({
             summ: 0,
             comment: '',
             category_id: 0,
-        }
+        },
+        catSettings: false,
+        filtersSettings: false,
+        searchForm: {
+            searchString: '',
+            summMin: '',
+            summMax: '',
+        },
+        tableLoading: false,
     },
     computed: {
         categoriesAssoc: function() {
@@ -87,7 +95,7 @@ const App = new Vue({
         categoriesSelect: function() {
             let data = [];
             this.categories.forEach((item) => {
-                data.push({label: item.name, code: item.id});
+                data.push({label: item.name, code: item.id, user_id: item.user_id});
             });
             return data;
         },
@@ -129,8 +137,10 @@ const App = new Vue({
     methods: {
         load: function () {
             this.edit = 0;
-            axios.post(loadUrl, {search: this.searchString, page: this.page,})
+            this.tableLoading = true;
+            axios.post(loadUrl, {search: this.searchForm, page: this.page})
                 .then((response) => {
+                    this.tableLoading = false;
                     this.operations = response.data.operations;
                     this.summ = response.data.summ;
                     this.page = response.data.operations.current_page;
@@ -138,6 +148,7 @@ const App = new Vue({
                     //console.log(response.data);
                 })
                 .catch(function (error) {
+                    this.tableLoading = false;
                     console.log(error.response);
                     Vue.$notify(error.response.data.message, 'error');
                 })
@@ -275,6 +286,57 @@ const App = new Vue({
                 return dateStr;
             }
 
+        },
+        catSave: function (id, value) {
+            console.log('catSave', id);
+            this.categories.forEach((item) => {
+                if (item.id == id) {
+                    axios.post('/dashboard/update_category', {id: id, name: item.name})
+                        .then((response) => {
+                            if (this.checkResult(response.data)) {
+                                this.load();
+                            }
+                        })
+                        .catch(function (error) {
+                            console.log(error.response);
+                            Vue.$notify(error.response.data.message, 'error');
+                        })
+                    ;
+                }
+            });
+        },
+        catDel: function (id) {
+            console.log('catDel', id);
+            this.$vueConfirm.confirm(
+                {
+                    auth: false,
+                    message: 'Вы уверены?',
+                    button: {
+                        no: 'Нет',
+                        yes: 'Да'
+                    }
+                },
+                (confirm) => {
+                    if (confirm == true) {
+                        axios.post('/dashboard/delete_category', {id: id})
+                            .then((response) => {
+                                if (this.checkResult(response.data)) {
+                                    this.load();
+                                }
+                            })
+                            .catch(function (error) {
+                                console.log(error.response);
+                                Vue.$notify(error.response.data.message, 'error');
+                            })
+                        ;
+                    }
+                }
+            );
+        },
+        searchStringKeyup: function (e) {
+            if (e.keyCode === 13) {
+                this.load();
+            }
         },
     },
     created: function () {

@@ -7,17 +7,42 @@
 
         <div class="tab-pane mb-2">
             <div class="input-group mb-3">
-                <input type="text" class="form-control" placeholder="Что ищем" aria-label="Что ищем" aria-describedby="basic-addon2" v-model="searchString">
+                <input type="text" class="form-control" placeholder="Что ищем" aria-label="Что ищем" aria-describedby="basic-addon2"
+                       v-model="searchForm.searchString" v-on:keyup="searchStringKeyup" >
                 <div class="input-group-append">
-                    <button class="input-group-text fa  fa-search" @click="load" title="Найти">&nbsp;</button>
+                    <button class="input-group-text fa  fa-search text-success" @click="load" title="Найти">&nbsp;</button>
                 </div>
                 <div class="input-group-append">
                     <button class="input-group-text fa  fa-close" @click="searchString = '';load();" title="Очистить">&nbsp;</button>
                 </div>
                 <div class="input-group-append">
-                    <button class="input-group-text fa fa-cog" title="Расширенный поиск">&nbsp;</button>
+                    <button class="input-group-text fa fa-cog" @click="filtersSettings = !filtersSettings" title="Расширенный поиск">&nbsp;</button>
                 </div>
             </div>
+            <div v-if="filtersSettings" v-cloak class="row">
+                <div class="col">
+                    Дата<br/>
+                    <div style="display: inline-block;width: 120px;"><date-picker :format="'DD.MM.YYYY'"></date-picker></div>
+                    -
+                    <div style="display: inline-block;width: 120px;"><date-picker :format="'DD.MM.YYYY'"></date-picker></div>
+                </div>
+                <div class="col">
+                    Категория
+                    <v-select :options="categoriesSelect" :clearable="true" :multiple="true">
+                        <template #option="{ code, label, user_id }">
+                            <span v-if="!!user_id" class="text-success">@{{ label }}</span>
+                            <template v-else>@{{ label }}</template>
+                        </template>
+                    </v-select>
+                </div>
+                <div class="col">
+                    Сумма<br/>
+                    <input type="text" class="form-control" v-model="searchForm.summMin" style="width: 100px;display: inline-block;"/>
+                    -
+                    <input type="text" class="form-control" v-model="searchForm.summMax" style="width: 100px;display: inline-block;"/>
+                </div>
+            </div>
+            <hr/>
         </div>
 
         <div class="row mb-2" v-cloak>
@@ -33,14 +58,38 @@
         </div>
 
         <div class="table-responsive" v-cloak>
-
+            <div class="forLoading" v-if="tableLoading">
+                <div class="loading"></div>
+            </div>
             <table class="rwd-table" v-if="!!operations.data">
                 <thead>
                 <tr>
                     {{--<th scope="col">Id</th>--}}
                     <th scope="col">Дата</th>
                     <th scope="col">Сумма</th>
-                    <th scope="col">Категория</th>
+                    <th scope="col">
+                        Категория
+                        <button class="input-group-text fa fa-cog" @click="catSettings = !catSettings" title="Настройки категорий">&nbsp;</button>
+                        <div v-if="catSettings" v-cloak class="mt-2">
+                            <div>
+                                <div v-for="(cat,i) in categories" class="input-group" v-if="!!cat.user_id">
+                                    <input class="form-control" v-model="categories[i].name"/>
+                                    <div class="input-group-append">
+                                        <button class="input-group-text fa fa-save"  title="Сохранить" @click="catSave(cat.id)">&nbsp;</button>
+                                    </div>
+                                    <div class="input-group-append">
+                                        <button class="input-group-text fa fa-trash"  title="Удалить" @click="catDel(cat.id)">&nbsp;</button>
+                                    </div>
+                                </div>
+                                <div class="input-group">
+                                    <input class="form-control"/>
+                                    <div class="input-group-append">
+                                        <button class="input-group-text fa fa-save"  title="Добавить">&nbsp;</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </th>
                     <th scope="col">Комментарий</th>
                     <th scope="col">Тэги</th>
                     <th scope="col">Действие</th>
@@ -56,7 +105,12 @@
                         </td>
                         <td data-th="Категория">
                            {{-- <input type="text" class="form-control" v-model="newItem.category_id"/>--}}
-                            <v-select :options="categoriesSelect" v-model="xNewCategory" :clearable="false"></v-select>
+                            <v-select :options="categoriesSelect" v-model="xNewCategory" :clearable="false">
+                                <template #option="{ code, label, user_id }">
+                                    <span v-if="!!user_id" class="text-success">@{{ label }}</span>
+                                    <template v-else>@{{ label }}</template>
+                                </template>
+                            </v-select>
                         </td>
                         <td data-th="Комментарий">
                             <input type="text" class="form-control"  v-model="newItem.comment"/>

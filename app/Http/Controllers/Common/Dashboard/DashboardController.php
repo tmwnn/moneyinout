@@ -62,12 +62,12 @@ class DashboardController extends Controller
      */
     public function load(Request $request)
     {
-        $search = $request->get('search', '');
+        $search = $request->get('search', []);
         $ts1 = microtime(true);
         $userId = \Auth::user()->id ?? 0;
-        $operations = $this->operationsService->search($search, $userId);
+        $operations = $this->operationsService->search($search['searchString'] ?? '', $userId);
         $categories = $this->categoriesService->searchByUser($userId);
-        $summ = $this->operationsService->sum($search, $userId);
+        $summ = $this->operationsService->sum($search['searchString'] ?? '', $userId);
         $ts2 = microtime(true);
         //\Log::channel('info')->debug('Operations/search_and_summ' . ($request->get('no_cache') ? ' (no cache)' : '') . ': '. ($ts2 - $ts1));
 
@@ -82,7 +82,7 @@ class DashboardController extends Controller
 
 
     /**
-     * Сохранение
+     * Сохранение операции
      *
      * @param Request $request
      * @return string
@@ -103,7 +103,7 @@ class DashboardController extends Controller
     }
 
     /**
-     * Изменение
+     * Изменение операции
      *
      * @param Request $request
      * @return string
@@ -125,7 +125,7 @@ class DashboardController extends Controller
 
 
     /**
-     * Удаление
+     * Удаление операции
      *
      * @param Request $request
      * @return string
@@ -139,6 +139,54 @@ class DashboardController extends Controller
             //\Log::channel('error')->error(__METHOD__ . ': ' . $e->getMessage());
             return response()->json([
                 'message' => 'Delete error',
+                'errors' => [[ $e->getMessage() ]],
+            ], 400)->send();
+        }
+        return json_encode([]);
+    }
+
+    /**
+     * Удаление категории
+     *
+     * @param Request $request
+     * @return string
+     */
+    public function deleteCategory(Request $request): string
+    {
+        $id = $request->get('id');
+        try {
+            $userId = \Auth::user()->id ?? 0;
+            $cat = $this->categoriesService->find($id);
+            if ($userId && $cat->user_id == $userId) {
+                $this->categoriesService->delete($id);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Delete error',
+                'errors' => [[ $e->getMessage() ]],
+            ], 400)->send();
+        }
+        return json_encode([]);
+    }
+
+    /**
+     * Сохранение категории
+     *
+     * @param Request $request
+     * @return string
+     */
+    public function updateCategory(Request $request): string
+    {
+        $id = $request->get('id');
+        try {
+            $userId = \Auth::user()->id ?? 0;
+            $cat = $this->categoriesService->find($id);
+            if ($userId && $cat->user_id == $userId) {
+                $this->categoriesService->update($id, ['name' => $request->get('name')]);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Update error',
                 'errors' => [[ $e->getMessage() ]],
             ], 400)->send();
         }

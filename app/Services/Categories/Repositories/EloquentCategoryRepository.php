@@ -42,12 +42,11 @@ class EloquentCategoryRepository implements CategoryRepositoryInterface
     {
         $userCategories = collect([]);
         if ($userId) {
-            $userCategories = Category::where('user_id', $userId)->get();
+            $userCategories = Category::where('user_id', $userId)->get()->toArray();
         }
-        $categories = Category::whereNull('user_id')->get();
-        $categories->merge($userCategories);
-
-        return $categories->toArray();
+        $categories = Category::whereNull('user_id')->get()->toArray();
+        $categories = array_merge($categories, $userCategories);
+        return $categories;
     }
 
     /**

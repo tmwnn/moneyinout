@@ -98,7 +98,7 @@ class CategoriesController extends Controller
 
 
     /**
-     * Удаление страны
+     * Удаление
      *
      * @param Request $request
      * @return string

@@ -101,4 +101,13 @@ class CategoriesService
         return $this->deleteHandler->handle($id);
     }
 
+    /**
+     *
+     * @param int $id
+     * @return bool
+     */
+    public function find(int $id)
+    {
+        return $this->cachedRepository->find($id);
+    }
 }

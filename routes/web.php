@@ -58,5 +58,7 @@ Route::name('dashboard.')->group(function () {
         Route::post('/store',  'Common\Dashboard\DashboardController@store')->name('store');
         Route::post('/update',  'Common\Dashboard\DashboardController@update')->name('update');
         Route::post('/delete',  'Common\Dashboard\DashboardController@delete')->name('delete');
+        Route::post('/delete_category',  'Common\Dashboard\DashboardController@deleteCategory')->name('delete_category');
+        Route::post('/update_category',  'Common\Dashboard\DashboardController@updateCategory')->name('update_category');
     });
 });
