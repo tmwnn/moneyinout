@@ -82,9 +82,9 @@
                                     </div>
                                 </div>
                                 <div class="input-group">
-                                    <input class="form-control"/>
+                                    <input class="form-control" v-model="newCategory"/>
                                     <div class="input-group-append">
-                                        <button class="input-group-text fa fa-save"  title="Добавить">&nbsp;</button>
+                                        <button class="input-group-text fa fa-save"  title="Добавить" @click="catStore">&nbsp;</button>
                                     </div>
                                 </div>
                             </div>

@@ -192,4 +192,26 @@ class DashboardController extends Controller
         }
         return json_encode([]);
     }
+
+    /**
+     * Добавление категории
+     *
+     * @param Request $request
+     * @return string
+     */
+    public function storeCategory(Request $request): string
+    {
+        try {
+            $userId = \Auth::user()->id ?? 0;
+            if ($userId) {
+                $this->categoriesService->store(['name' => $request->get('name'), 'user_id' => $userId]);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Store error',
+                'errors' => [[ $e->getMessage() ]],
+            ], 400)->send();
+        }
+        return json_encode([]);
+    }
 }

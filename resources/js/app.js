@@ -76,6 +76,7 @@ const App = new Vue({
             category_id: 0,
         },
         catSettings: false,
+        newCategory: '',
         filtersSettings: false,
         searchForm: {
             searchString: '',
@@ -285,6 +286,23 @@ const App = new Vue({
             } else {
                 return dateStr;
             }
+
+        },
+        catStore: function () {
+            console.log('catStore');
+
+            axios.post('/dashboard/store_category', {name: this.newCategory})
+                .then((response) => {
+                    if (this.checkResult(response.data)) {
+                        this.newCategory = '';
+                        this.load();
+                    }
+                })
+                .catch(function (error) {
+                    console.log(error.response);
+                    Vue.$notify(error.response.data.message, 'error');
+                })
+            ;
 
         },
         catSave: function (id, value) {
