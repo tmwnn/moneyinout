@@ -22,13 +22,13 @@
             <div v-if="filtersSettings" v-cloak class="row">
                 <div class="col">
                     Дата<br/>
-                    <div style="display: inline-block;width: 120px;"><date-picker :format="'DD.MM.YYYY'"></date-picker></div>
+                    <div style="display: inline-block;width: 120px;"><date-picker :format="'DD.MM.YYYY'" v-model="xSearchDateMin"></date-picker></div>
                     -
-                    <div style="display: inline-block;width: 120px;"><date-picker :format="'DD.MM.YYYY'"></date-picker></div>
+                    <div style="display: inline-block;width: 120px;"><date-picker :format="'DD.MM.YYYY'" v-model="xSearchDateMax"></date-picker></div>
                 </div>
                 <div class="col">
                     Категория
-                    <v-select :options="categoriesSelect" :clearable="true" :multiple="true">
+                    <v-select :options="categoriesSelect" :clearable="true" :multiple="true" v-model="searchForm.categories">
                         <template #option="{ code, label, user_id }">
                             <span v-if="!!user_id" class="text-success">@{{ label }}</span>
                             <template v-else>@{{ label }}</template>
@@ -56,7 +56,27 @@
                 <button class="btn btn-info active float-right fa fa-2x fa-table" aria-hidden="true"></button>
             </div>
         </div>
-
+        <div v-if="catSettings" v-cloak class="mt-2">
+            <div>
+                <hr/>
+                <div>Здесь вы можете управлять своими категориями <a href="javascript:void(0)" @click="catSettings = false" class="float-right fa fa-close">закрыть</a></div>
+                <div v-for="(cat,i) in categories" class="input-group" v-if="!!cat.user_id">
+                    <input class="form-control" v-model="categories[i].name"/>
+                    <div class="input-group-append">
+                        <button class="input-group-text fa fa-save"  title="Сохранить" @click="catSave(cat.id)">&nbsp;</button>
+                    </div>
+                    <div class="input-group-append">
+                        <button class="input-group-text fa fa-trash"  title="Удалить" @click="catDel(cat.id)">&nbsp;</button>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <input class="form-control" v-model="newCategory"/>
+                    <div class="input-group-append">
+                        <button class="input-group-text fa fa-save"  title="Добавить" @click="catStore">&nbsp;</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="table-responsive" v-cloak>
             <div class="forLoading" v-if="tableLoading">
                 <div class="loading"></div>
@@ -70,25 +90,7 @@
                     <th scope="col">
                         Категория
                         <button class="input-group-text fa fa-cog" @click="catSettings = !catSettings" title="Настройки категорий">&nbsp;</button>
-                        <div v-if="catSettings" v-cloak class="mt-2">
-                            <div>
-                                <div v-for="(cat,i) in categories" class="input-group" v-if="!!cat.user_id">
-                                    <input class="form-control" v-model="categories[i].name"/>
-                                    <div class="input-group-append">
-                                        <button class="input-group-text fa fa-save"  title="Сохранить" @click="catSave(cat.id)">&nbsp;</button>
-                                    </div>
-                                    <div class="input-group-append">
-                                        <button class="input-group-text fa fa-trash"  title="Удалить" @click="catDel(cat.id)">&nbsp;</button>
-                                    </div>
-                                </div>
-                                <div class="input-group">
-                                    <input class="form-control" v-model="newCategory"/>
-                                    <div class="input-group-append">
-                                        <button class="input-group-text fa fa-save"  title="Добавить" @click="catStore">&nbsp;</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+
                     </th>
                     <th scope="col">Комментарий</th>
                     <th scope="col">Тэги</th>

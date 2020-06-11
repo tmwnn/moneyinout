@@ -11,9 +11,9 @@ use App\Models\Operation;
 interface CachedOperationRepositoryInterface
 {
 
-    public function sum($search, $userId);
+    public function sum($filters, $userId);
 
-    public function search($search, $userId);
+    public function search($filters, $userId);
 
     public function clearSearchCache();
 

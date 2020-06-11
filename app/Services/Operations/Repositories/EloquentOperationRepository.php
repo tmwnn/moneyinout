@@ -7,36 +7,63 @@ namespace App\Services\Operations\Repositories;
 
 use App\Models\Operation;
 use App\Services\Operations\Repositories\OperationRepositoryInterface;
+use Illuminate\Database\Eloquent\Builder;
 
 class EloquentOperationRepository implements OperationRepositoryInterface
 {
 
+    /**
+     * @param array $filters
+     * @param int $userId
+     * @return Builder
+     */
+    private function searchByFilters($filters = [], $userId = 0)
+    {
+        $Operations = Operation::where('user_id', $userId);
+        if (!empty($filters)) {
+            if (!empty($filters['searchString'])) {
+                $Operations->where('search', 'like', '%' . $filters['searchString'] . '%');
+            }
+            if (strlen($filters['summMin'] ?? '')) {
+                $Operations->where('summ', '>=', intval($filters['summMin']));
+            }
+            if (strlen($filters['summMax'] ?? '')) {
+                $Operations->where('summ', '<=', intval($filters['summMax']));
+            }
+            if (!empty($filters['dateMin'])) {
+                $Operations->where('date', '>=', ($filters['dateMin']));
+            }
+            if (!empty($filters['dateMax'])) {
+                $Operations->where('date', '<=', ($filters['dateMax']));
+            }
+            if (!empty($filters['categories'])) {
+                $categoriesIds = collect($filters['categories'])->pluck('code')->toArray();
+                $categoriesIds = array_map('intval', $categoriesIds);
+                $Operations->whereIn('category_id', $categoriesIds);
+            }
+        }
+        return $Operations;
+    }
 
     /**
-     * @param string $search
+     * @param array $filters
      * @param int $userId
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
-    public function search($search = '', int $userId = 0)
+    public function search($filters = [], int $userId = 0)
     {
-        $Operations = Operation::where('user_id', $userId);
-        if ($search) {
-            $Operations->where('search', 'like', '%' . $search . '%');
-        }
+        $Operations = $this->searchByFilters($filters, $userId);
         return $Operations->orderBy('id', 'desc')->paginate();
     }
 
     /**
-     * @param string $search
+     * @param array $filters
      * @param int $userId
      * @return integer
      */
-    public function sum($search = '', int $userId = 0)
+    public function sum($filters = [], int $userId = 0)
     {
-        $Operations = Operation::where('user_id', $userId);
-        if ($search) {
-            $Operations->where('search', 'like', '%' . $search . '%');
-        }
+        $Operations = $this->searchByFilters($filters, $userId);
         return $Operations->sum('summ');
     }
 

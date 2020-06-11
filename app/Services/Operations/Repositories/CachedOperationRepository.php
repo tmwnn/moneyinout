@@ -31,29 +31,29 @@ class CachedOperationRepository implements CachedOperationRepositoryInterface
     }
 
 
-    public function search($search, $userId)
+    public function search($filters, $userId)
     {
-        if (!empty($search) || request()->get('no_cache')) {
+        if (!empty($filters) || request()->get('no_cache')) {
             // для оптимизации кэшируем только без фильтров
-            return $this->operationRepository->search($search, $userId);
+            return $this->operationRepository->search($filters, $userId);
         }
-        $key = $this->cacheKeyManager->getSearchOperationsKey(['search' => $search, 'user_id' => $userId]);
+        $key = $this->cacheKeyManager->getSearchOperationsKey(['user_id' => $userId]);
         return Cache::tags([Tag::OPERATIONS])
-            ->remember($key, self::CACHE_SEARCH_SECONDS, function () use ($search, $userId) {
-            return $this->operationRepository->search($search, $userId);
+            ->remember($key, self::CACHE_SEARCH_SECONDS, function () use ($userId) {
+            return $this->operationRepository->search([], $userId);
         });
     }
 
-    public function sum($search, $userId): int
+    public function sum($filters, $userId): int
     {
         if (!empty($search) || request()->get('no_cache')) {
             // для оптимизации кэшируем только без фильтров
-            return $this->operationRepository->sum($search, $userId);
+            return $this->operationRepository->sum($filters, $userId);
         }
-        $key = $this->cacheKeyManager->getSearchOperationsKey(['search' => $search, 'user_id' => $userId]);
+        $key = $this->cacheKeyManager->getSearchOperationsKey([ 'user_id' => $userId]);
         return Cache::tags([Tag::OPERATIONS_SUM])
-            ->remember($key, self::CACHE_SEARCH_SECONDS, function () use ($search, $userId) {
-                return $this->operationRepository->sum($search, $userId);
+            ->remember($key, self::CACHE_SEARCH_SECONDS, function () use ($userId) {
+                return $this->operationRepository->sum([], $userId);
             });
     }
 

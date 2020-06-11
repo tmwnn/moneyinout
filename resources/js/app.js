@@ -79,9 +79,12 @@ const App = new Vue({
         newCategory: '',
         filtersSettings: false,
         searchForm: {
+            dateMin: '',
+            dateMax: '',
             searchString: '',
             summMin: '',
             summMax: '',
+            categories: [],
         },
         tableLoading: false,
     },
@@ -105,8 +108,11 @@ const App = new Vue({
                 return this.newItem.date;
             },
             set: function (value) {
-                let dateStr = new Date(value).toISOString().substring(0,10);
-                this.newItem.date = dateStr;
+                if (!!value) {
+                    this.newItem.date = this.dateToStr(value);
+                } else {
+                    this.newItem.date = '';
+                }
             }
         },
         xEditDate: {
@@ -114,8 +120,11 @@ const App = new Vue({
                 return this.editItem.date;
             },
             set: function (value) {
-                let dateStr = new Date(value).toISOString().substring(0,10);
-                this.editItem.date = dateStr;
+                if (!!value) {
+                    this.editItem.date = this.dateToStr(value);
+                } else {
+                    this.editItem.date = '';
+                }
             }
         },
         xNewCategory: {
@@ -134,8 +143,37 @@ const App = new Vue({
                 this.editItem.category_id = value.code;
             },
         },
+        xSearchDateMin: {
+            get: function () {
+                return this.searchForm.dateMin;
+            },
+            set: function (value) {
+                if (!!value) {
+                    this.searchForm.dateMin = this.dateToStr(value);
+                } else {
+                    this.searchForm.dateMin = '';
+                }
+            }
+        },
+        xSearchDateMax: {
+            get: function () {
+                return this.searchForm.dateMax;
+            },
+            set: function (value) {
+                if (!!value) {
+                    this.searchForm.dateMax = this.dateToStr(value);
+                } else {
+                    this.searchForm.dateMax = '';
+                }
+            }
+        },
     },
     methods: {
+        dateToStr: function (value) {
+            let date = new Date(value);
+            let strDate = date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + (date.getDate())).slice(-2);
+            return strDate;
+        },
         load: function () {
             this.edit = 0;
             this.tableLoading = true;
@@ -148,7 +186,7 @@ const App = new Vue({
                     this.categories = response.data.categories;
                     //console.log(response.data);
                 })
-                .catch(function (error) {
+                .catch((error) => {
                     this.tableLoading = false;
                     console.log(error.response);
                     Vue.$notify(error.response.data.message, 'error');

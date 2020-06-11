@@ -44,24 +44,24 @@ class OperationsService
 
     /**
      * Поиск и выдача результата
-     * @param string $string поисковая строка
+     * @param array $filters поисковые фильтры
      * @param string $userId ид пользователя
      * @return LengthAwarePaginator
      */
-    public function search($string, $userId): LengthAwarePaginator
+    public function search($filters, $userId): LengthAwarePaginator
     {
-        return $this->cachedRepository->search($string, $userId);
+        return $this->cachedRepository->search($filters, $userId);
     }
 
     /**
      * Сумма дохода
-     * @param string $string поисковая строка
+     * @param array $filters поисковая строка
      * @param string $userId ид пользователя
      * @return int
      */
-    public function sum($string, $userId): int
+    public function sum($filters, $userId): int
     {
-        return $this->cachedRepository->sum($string, $userId);
+        return $this->cachedRepository->sum($filters, $userId);
     }
 
 

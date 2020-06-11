@@ -62,19 +62,19 @@ class DashboardController extends Controller
      */
     public function load(Request $request)
     {
-        $search = $request->get('search', []);
+        $searchArr = $request->get('search', []);
         $ts1 = microtime(true);
         $userId = \Auth::user()->id ?? 0;
-        $operations = $this->operationsService->search($search['searchString'] ?? '', $userId);
+        $operations = $this->operationsService->search($searchArr, $userId);
         $categories = $this->categoriesService->searchByUser($userId);
-        $summ = $this->operationsService->sum($search['searchString'] ?? '', $userId);
+        $summ = $this->operationsService->sum($searchArr, $userId);
         $ts2 = microtime(true);
         //\Log::channel('info')->debug('Operations/search_and_summ' . ($request->get('no_cache') ? ' (no cache)' : '') . ': '. ($ts2 - $ts1));
 
         $result = [
             'operations' => $operations,
             'categories' => $categories,
-            'search' => $search,
+            'search' => $searchArr,
             'summ' => $summ,
         ];
         return response()->json($result,200)->send();

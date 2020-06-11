@@ -10,11 +10,16 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item @if ($page == 'index') active @endif">
-                <a class="nav-link" href="{{ route('dashboard.index') }}">@lang('menu.main') <span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="{{ route('dashboard.index') }}">Моя страница<span class="sr-only">(current)</span></a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/cms/">@lang('menu.cms') <span class="sr-only">(current)</span></a>
-            </li>
+            @guest
+            @else
+                @if (Auth::user()->level == 3)
+                    <li class="nav-item">
+                        <a class="nav-link" href="/cms/">@lang('menu.cms') <span class="sr-only">(current)</span></a>
+                    </li>
+                @endif
+            @endguest
             {{--
             <li class="nav-item @if ($page == 'profile') active @endif">
                 <a class="nav-link" href="/{{ App::getLocale() }}/profile">@lang('menu.profile')</a>

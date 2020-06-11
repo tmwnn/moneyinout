@@ -8,9 +8,9 @@ namespace App\Services\Operations\Repositories;
 
 interface OperationRepositoryInterface
 {
-    public function search(string $search = '', int $userId = 0);
+    public function search(array $filters = [], int $userId = 0);
 
-    public function sum(string $search = '', int $userId = 0);
+    public function sum(array $filters = [], int $userId = 0);
 
     public function createFromArray(array $data);
 
