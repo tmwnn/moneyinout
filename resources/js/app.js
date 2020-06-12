@@ -60,6 +60,7 @@ const App = new Vue({
             income: 0,
             outcome: 0,
         },
+        stat: [],
         newItem: {
             date: typeof(curDate) !== "undefined" ? curDate : new Date().toISOString().substring(0,10),
             summ: 0,
@@ -86,7 +87,8 @@ const App = new Vue({
             categories: [],
         },
         tableLoading: false,
-        graphView: false,
+        viewType: 'operations', // operations
+        groupType: 'm',
     },
     computed: {
         categoriesAssoc: function() {
@@ -177,16 +179,21 @@ const App = new Vue({
         load: function () {
             this.edit = 0;
             this.tableLoading = true;
-            axios.post(loadUrl, {search: this.searchForm, page: this.page})
+            axios.post(loadUrl, {search: this.searchForm, page: this.page, type: this.viewType, group: this.groupType})
                 .then((response) => {
                     this.tableLoading = false;
                     this.operations = response.data.operations;
                     this.summ = response.data.summ;
                     this.page = response.data.operations.current_page;
                     this.categories = response.data.categories;
-                    if (this.graphView) {
+                    if (this.viewType == 'graph') {
+                        this.stat = response.data.stat;
                         this.loadGraph();
                     }
+                    if (this.viewType == 'stat') {
+                        this.stat = response.data.stat;
+                    }
+
                     //console.log(response.data);
                 })
                 .catch((error) => {
@@ -321,10 +328,14 @@ const App = new Vue({
             this.load();
         },
         dateConvert: function (dateStr) {
-            let a = dateStr.split('-');
+            let a = dateStr.toString().split('-');
             if (a.length == 3) {
                 return a[2] + '.' + a[1] + '.' + a[0];
-            } else {
+            }
+            else if (a.length == 2) {
+                return a[1] + '.' + a[0];
+            }
+            else {
                 return dateStr;
             }
 
@@ -412,9 +423,103 @@ const App = new Vue({
             };
             this.load();
         },
+
         loadGraph: function () {
-            this.graphView = true;
+            let income = [];
+            let outcome = [];
+            let total = [];
+
+            for (let i = 0; i < this.stat.length; i++) {
+                if (this.stat[i].income) {
+                    income.push([
+                        this.stat[i].date,
+                        this.stat[i].income,
+                    ]);
+                }
+                if (this.stat[i].outcome) {
+                    outcome.push([
+                        this.stat[i].date,
+                        this.stat[i].outcome,
+                    ]);
+                }
+                if (this.stat[i].total) {
+                    total.push([
+                        this.stat[i].date,
+                        this.stat[i].total,
+                    ]);
+                }
+            }
+
+            Highcharts.stockChart('container', {
+                chart: {
+                    height: '60%'
+                },
+                rangeSelector: {
+                    selected: 'all'
+                },
+                title: {
+                    text: ''
+                },
+                yAxis: [
+                    {
+                        labels: {
+                            align: 'right',
+                            x: -3
+                        },
+                        title: {
+                            text: 'Доход'
+                        },
+                        height: '60%',
+                        lineWidth: 2,
+                        resize: {
+                            enabled: true
+                        }
+                    },
+                    {
+                        labels: {
+                            align: 'right',
+                            x: -3
+                        },
+                        title: {
+                            text: 'Остаток'
+                        },
+                        top: '65%',
+                        height: '35%',
+                        offset: 0,
+                        lineWidth: 2
+                    },
+                ],
+                tooltip: {
+                    split: false,
+                    shared: true,
+                },
+                series: [
+                    {
+                        type: 'line',
+                        name: 'Доход',
+                        data: income,
+                        color: '#3db378',
+                    },
+                    {
+                        type: 'line',
+                        name: 'Расход',
+                        data: outcome,
+                        color: '#ea4f4a',
+                    },
+                    {
+                        type: 'column',
+                        name: 'Остаток',
+                        data: total,
+                        yAxis: 1,
+                        color: '#7cb5ec', // '#434348',
+                    }
+                ]
+            });
         },
+        changeGroupType: function (type) {
+            this.groupType = type;
+            this.load();
+        }
     },
     created: function () {
         if (typeof(loadUrl) !== 'undefined') {

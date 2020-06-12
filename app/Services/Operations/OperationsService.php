@@ -100,4 +100,19 @@ class OperationsService
         return $this->deleteHandler->handle($id);
     }
 
+
+    /**
+     * Статистика
+     * @param array $filters поисковая строка
+     * @param integer $userId ид пользователя
+     * @param string $group
+     * @param string $type
+     * @return array
+     */
+    public function stat($filters, $userId, $group, $type): array
+    {
+        return $this->repository->stat($filters, $userId, $group, $type);
+    }
+
+
 }

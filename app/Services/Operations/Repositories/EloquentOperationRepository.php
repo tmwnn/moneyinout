@@ -76,6 +76,57 @@ class EloquentOperationRepository implements OperationRepositoryInterface
     }
 
     /**
+     * @param array $filters
+     * @param int $userId
+     * @param string $group
+     * @param string $type
+     * @return array
+     */
+    public function stat(array $filters = [], int $userId = 0, $group = 'm', $type = '')
+    {
+        $OperationsList = $this->searchByFilters($filters, $userId)->get();
+        $OperationsList->flatMap(function ($values) use ($group) {
+            $groupStr = $values->date;
+            if ($group == 'm') {
+                $groupStr =  substr($values->date, 0, 7);
+            }
+            if ($group == 'y') {
+                $groupStr =  substr($values->date, 0, 4);
+            }
+            $values->group = $groupStr;
+            return $values;
+        });
+        $groupedList = $OperationsList->groupBy('group');
+        $resultArr = [];
+        foreach ($groupedList as $group => $items) {
+            $total = $items->sum('summ');
+            $income = $items->where('summ', '>', 0)->sum('summ');
+            $outcome = $items->where('summ', '<', 0)->sum('summ');
+            $date = $group;
+            if (strlen($group) == 7) {
+                $date = $group .'-01';
+            }
+            if (strlen($group) == 4) {
+                $date = $group .'-01-01';
+            }
+            $resultItem = [
+                'group' => $group,
+                'total' => $total,
+                'income' => $income,
+                'outcome' => $outcome * -1,
+                'date' => strtotime($date) * 1000,
+            ];
+            $resultArr[] = $resultItem;
+        }
+        if ($type == 'graph') {
+            $resultArr = array_values(collect($resultArr)->sortBy('group')->toArray());
+        } else {
+            $resultArr = array_values(collect($resultArr)->sortByDesc('group')->toArray());
+        }
+        return $resultArr;
+    }
+
+    /**
      * @param array $data
      * @return Operation
      */

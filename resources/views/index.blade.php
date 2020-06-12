@@ -47,7 +47,7 @@
 
         <div class="row mb-2" v-cloak>
             <div class="col">
-                <span v-if="summ.total != summ.income && summ.total != summ.outcome">Общая сумма: @{{ summ.total }}</span>
+                <span v-if="summ.total != summ.income && summ.total != summ.outcome">Остаток: @{{ summ.total }}</span>
                 <span v-if="summ.income" class="ml-1 text-success">Доходы: @{{ summ.income }}</span>
                 <span v-if="summ.outcome" class="ml-1 text-danger">Расходы: @{{ summ.outcome }}</span>
             </div>
@@ -56,8 +56,9 @@
             <div class="col">За последнюю неделю: @{{ summ }}</div>
             --}}
             <div class="col">
-                <button class="ml-1 btn btn-info float-right fa fa-2x fa-line-chart" :class="{active:graphView}" @click="loadGraph" aria-hidden="true"></button>
-                <button class="btn btn-info float-right fa fa-2x fa-table" :class="{active:!graphView}" @click="graphView=false;" aria-hidden="true"></button>
+                <button class="ml-1 btn btn-info float-right fa fa-2x fa-line-chart" :class="{active: viewType == 'graph'}" @click="viewType = 'graph'; load();" aria-hidden="true"></button>
+                <button class="ml-1 btn btn-info float-right fa fa-2x fa-table" :class="{active: viewType == 'stat'}" @click="viewType = 'stat'; load();" aria-hidden="true"></button>
+                <button class="btn btn-info float-right fa fa-2x fa-list" :class="{active: viewType == 'operations'}" @click="viewType = 'operations'" aria-hidden="true"></button>
             </div>
         </div>
         <div v-if="catSettings" v-cloak class="mt-2">
@@ -88,7 +89,7 @@
         </div>
 
         {{-- Таблица --}}
-        <div class="table-responsive" v-if="!graphView" v-cloak>
+        <div class="table-responsive" v-if="viewType == 'operations'" v-cloak>
             <table class="rwd-table" v-if="!!operations.data">
                 <thead>
                 <tr>
@@ -199,7 +200,7 @@
 
             {{-- $incomes->links() --}}
             <nav v-if="operations.data.length">
-                <ul class="pagination">
+                <ul class="pagination" v-if="operations.last_page != 1">
                     <li class="page-item" v-if="operations.current_page > 1"><a href="javascript:void(0);" class="page-link" v-on:click.prevent="setPage(1);">&laquo;</a></li>
                     <li class="page-item" v-if="operations.current_page > 3"><a href="javascript:void(0);" class="page-link" v-on:click.prevent="setPage(1);">1</a></li>
                     <li class="page-item" v-if="operations.current_page > 3"><a href="javascript:void(0);" class="page-link">...</a></li>
@@ -217,14 +218,49 @@
 
         </div>
 
-        {{-- График --}}
-        <div v-if="graphView">
+        {{-- кнопки группировки для статистики и графика --}}
+        <div v-if="viewType == 'stat' || viewType == 'graph'">
 
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-info" :class="{active: groupType == 'd'}" @click="changeGroupType('d')">День</button>
+                <button type="button" class="btn btn-info" :class="{active: groupType == 'm'}" @click="changeGroupType('m')">Месяц</button>
+                <button type="button" class="btn btn-info" :class="{active: groupType == 'y'}" @click="changeGroupType('y')">Год</button>
+            </div>
+
+            {{-- Статистика --}}
+            <div v-if="viewType == 'stat'" v-cloak>
+                <div class="table-responsive mt-2" v-if="stat.length">
+                    <table class="table">
+                        <tr>
+                            <th>Дата</th>
+                            <th>Расход</th>
+                            <th>Доход</th>
+                            <th>Остаток</th>
+                        </tr>
+                        <tr v-for="item in stat">
+                            <td data-th="Дата" v-html="dateConvert(item.group)"></td>
+                            <td data-th="Расход" v-html="item.outcome"></td>
+                            <td data-th="Доход" v-html="item.income"></td>
+                            <td data-th="Остаток" v-html="item.total"></td>
+                        </tr>
+                    </table>
+                </div>
+                <div v-else-if="!tableLoading">По вашему запросу ничего не найдено</div>
+            </div>
+
+            {{-- График --}}
+            <div v-if="viewType == 'graph'">
+                <div id="container"></div>
+            </div>
         </div>
     </div>
 @endsection
 
 @push('scripts')
+    <script src="https://code.highcharts.com/stock/highstock.js"></script>
+    <script src="https://code.highcharts.com/stock/modules/data.js"></script>
+    <script src="https://code.highcharts.com/stock/modules/drag-panes.js"></script>
+    <script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js" type="text/javascript"></script>
     <script>
         var loadUrl = '{{ route('dashboard.index') }}';

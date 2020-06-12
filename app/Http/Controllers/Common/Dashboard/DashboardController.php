@@ -50,7 +50,7 @@ class DashboardController extends Controller
         */
         //$userId = \Auth::user()->id ?? 0;
         //$categories = $this->categoriesService->searchByUser($userId);
-        //dd($categories);
+        //dd($this->operationsService->stat([], 1, 'y'));
         return view('index');
     }
 
@@ -68,8 +68,6 @@ class DashboardController extends Controller
         $operations = $this->operationsService->search($searchArr, $userId);
         $categories = $this->categoriesService->searchByUser($userId);
         $summ = $this->operationsService->sum($searchArr, $userId);
-        $ts2 = microtime(true);
-        //\Log::channel('info')->debug('Operations/search_and_summ' . ($request->get('no_cache') ? ' (no cache)' : '') . ': '. ($ts2 - $ts1));
 
         $result = [
             'operations' => $operations,
@@ -77,6 +75,13 @@ class DashboardController extends Controller
             'search' => $searchArr,
             'summ' => $summ,
         ];
+        $type = $request->get('type' );
+        if ($type == 'stat' || $type == 'graph') {
+            $group = $request->get('group');
+            $result['stat'] = $this->operationsService->stat($searchArr, $userId, $group, $type);
+        }
+        $ts2 = microtime(true);
+        //\Log::channel('info')->debug('Operations/search_and_summ' . ($request->get('no_cache') ? ' (no cache)' : '') . ': '. ($ts2 - $ts1));
         return response()->json($result,200)->send();
     }
 

@@ -12,6 +12,8 @@ interface OperationRepositoryInterface
 
     public function sum(array $filters = [], int $userId = 0);
 
+    public function stat(array $filters = [], int $userId = 0, $group = 'm', $type = '');
+
     public function createFromArray(array $data);
 
     public function getUsersIds();
