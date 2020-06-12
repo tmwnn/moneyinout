@@ -31,7 +31,9 @@ class UpdateUserHandler
     {
         $data['name'] = trim($data['name']);
         $data['email'] = trim($data['email']);
-        $data['level'] = intval($data['level']);
+        if (isset($data['level'])) {
+            $data['level'] = intval($data['level']);
+        }
         return $this->userRepository->updateFromArray($id, $data);
     }
 

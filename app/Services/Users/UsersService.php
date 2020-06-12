@@ -37,6 +37,16 @@ class UsersService
         $this->repository = $userRepository;
     }
 
+    /**
+     * Данные пользователя по ид
+     * @param integer $id ид пользователя
+     * @return User
+     */
+    public function find($id): User
+    {
+        return $this->repository->find($id);
+    }
+
 
     /**
      * Поиск и выдача результата с фильтром по почте и имени

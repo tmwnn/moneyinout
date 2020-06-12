@@ -14,6 +14,9 @@
             </li>
             @guest
             @else
+                <li class="nav-item @if (route::is('profile')) active @endif">
+                    <a class="nav-link" href="{{ route('profile') }}">Настройки</a>
+                </li>
                 @if (Auth::user()->level == \App\Models\User::LEVEL_ADMIN)
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('cms.index') }}">Панель управления</a>
@@ -34,11 +37,11 @@
             <!-- Authentication Links -->
             @guest
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
+                    <a class="nav-link" href="{{ route('login') }}">Вход</a>
                 </li>
                 @if (Route::has('register'))
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
+                        <a class="nav-link" href="{{ route('register') }}">Регистрация</a>
                     </li>
                 @endif
             @else
@@ -48,10 +51,14 @@
                     </a>
 
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="{{ route('profile') }}">
+                            Настройки
+                        </a>
+
                         <a class="dropdown-item" href="{{ route('logout') }}"
                            onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
-                            {{ __('Logout') }}
+                                 document.getElementById('logout-form').submit();">
+                            Выход
                         </a>
 
                         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">

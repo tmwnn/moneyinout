@@ -89,6 +89,8 @@ const App = new Vue({
         tableLoading: false,
         viewType: 'operations', // operations
         groupType: 'm',
+        changePassword: false,
+        connectTelegram: false,
     },
     computed: {
         categoriesAssoc: function() {

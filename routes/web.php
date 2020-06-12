@@ -14,6 +14,9 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
+Route::get('/profile', 'Auth\ProfileController@edit')->name('profile');
+Route::post('/profile', 'Auth\ProfileController@update')->name('profile');
+
 Route::name('cms.')->group(function () {
     Route::prefix('cms')->middleware([
         'auth',
