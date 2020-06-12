@@ -13,7 +13,7 @@
                     <button class="input-group-text fa  fa-search text-success" @click="load" title="Найти">&nbsp;</button>
                 </div>
                 <div class="input-group-append">
-                    <button class="input-group-text fa  fa-close" @click="searchString = '';load();" title="Очистить">&nbsp;</button>
+                    <button class="input-group-text fa  fa-close" @click="clearForm" title="Очистить">&nbsp;</button>
                 </div>
                 <div class="input-group-append">
                     <button class="input-group-text fa fa-cog" @click="filtersSettings = !filtersSettings" title="Расширенный поиск">&nbsp;</button>
@@ -46,14 +46,18 @@
         </div>
 
         <div class="row mb-2" v-cloak>
-            <div class="col">Сумма: @{{ summ }}</div>
+            <div class="col">
+                <span v-if="summ.total != summ.income && summ.total != summ.outcome">Общая сумма: @{{ summ.total }}</span>
+                <span v-if="summ.income" class="ml-1 text-success">Доходы: @{{ summ.income }}</span>
+                <span v-if="summ.outcome" class="ml-1 text-danger">Расходы: @{{ summ.outcome }}</span>
+            </div>
             {{--
             <div class="col">За последний месяц: @{{ summ }}</div>
             <div class="col">За последнюю неделю: @{{ summ }}</div>
             --}}
             <div class="col">
-                <button class="ml-1 btn btn-info float-right fa fa-2x fa-line-chart" aria-hidden="true"></button>
-                <button class="btn btn-info active float-right fa fa-2x fa-table" aria-hidden="true"></button>
+                <button class="ml-1 btn btn-info float-right fa fa-2x fa-line-chart" :class="{active:graphView}" @click="loadGraph" aria-hidden="true"></button>
+                <button class="btn btn-info float-right fa fa-2x fa-table" :class="{active:!graphView}" @click="graphView=false;" aria-hidden="true"></button>
             </div>
         </div>
         <div v-if="catSettings" v-cloak class="mt-2">
@@ -77,10 +81,14 @@
                 </div>
             </div>
         </div>
-        <div class="table-responsive" v-cloak>
-            <div class="forLoading" v-if="tableLoading">
-                <div class="loading"></div>
-            </div>
+
+        {{-- Спиннер --}}
+        <div class="forLoading" v-if="tableLoading">
+            <div class="loading"></div>
+        </div>
+
+        {{-- Таблица --}}
+        <div class="table-responsive" v-if="!graphView" v-cloak>
             <table class="rwd-table" v-if="!!operations.data">
                 <thead>
                 <tr>
@@ -118,7 +126,7 @@
                             <input type="text" class="form-control"  v-model="newItem.comment"/>
                         </td>
                         <td data-th="Тэги">
-                            <input type="text" class="form-control"/>
+                            <input type="text" class="form-control"  v-model="newItem.tags"/>
                         </td>
                         <td>
                             <a href="javascript:void(0);" @click="storeRow('{{ route('dashboard.store') }}')" class="text-success fa fa-2x fa-save" title="Добавить"></a>
@@ -161,10 +169,12 @@
                         </td>
                         <td data-th="Тэги">
                             <template v-if="edit != item.id">
-
+                                <template v-for="tag in item.tags.split(' ')">
+                                    <a href="javascript:void(0);" @click="searchTag(tag)" class="mr-1">@{{ tag }}</a>
+                                </template>
                             </template>
                             <template v-else>
-                                <input type="text" class="form-control" name="tags" />
+                                <input type="text" class="form-control" v-model="editItem.tags"/>
                             </template>
                         </td>
 
@@ -188,7 +198,7 @@
             </table>
 
             {{-- $incomes->links() --}}
-            <nav>
+            <nav v-if="operations.data.length">
                 <ul class="pagination">
                     <li class="page-item" v-if="operations.current_page > 1"><a href="javascript:void(0);" class="page-link" v-on:click.prevent="setPage(1);">&laquo;</a></li>
                     <li class="page-item" v-if="operations.current_page > 3"><a href="javascript:void(0);" class="page-link" v-on:click.prevent="setPage(1);">1</a></li>
@@ -203,10 +213,14 @@
                     <li class="page-item" v-if="operations.current_page < operations.last_page"><a href="javascript:void(0);" class="page-link" v-on:click.prevent="setPage(operations.last_page);">&raquo;</a></li>
                 </ul>
             </nav>
+            <div v-else>По вашему запросу ничего не найдено</div>
 
         </div>
 
+        {{-- График --}}
+        <div v-if="graphView">
 
+        </div>
     </div>
 @endsection
 

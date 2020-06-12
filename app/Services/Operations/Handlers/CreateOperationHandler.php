@@ -32,7 +32,8 @@ class CreateOperationHandler
         $data['user_id'] = \Auth::user()->id;
         $catName = Category::find($data['category_id'])->name ?? '';
         $data['comment'] = $data['comment'] ?? '';
-        $data['search'] = $catName . ': ' . $data['comment'];
+        $data['tags'] = $data['tags'] ?? '';
+        $data['search'] = "{$catName}: {$data['comment']} {$data['tags']}";
         return $this->operationRepository->createFromArray($data);
     }
 

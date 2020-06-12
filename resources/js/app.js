@@ -55,25 +55,24 @@ const App = new Vue({
             data: [],
         },
         categories: [],
-        summ: 0,
-        columns: [
-            'id',
-            'date',
-            'summ',
-            'category_id',
-            'comment'
-        ],
+        summ: {
+            total: 0,
+            income: 0,
+            outcome: 0,
+        },
         newItem: {
             date: typeof(curDate) !== "undefined" ? curDate : new Date().toISOString().substring(0,10),
             summ: 0,
             comment: '',
             category_id: 0,
+            tags: '',
         },
         editItem: {
             date: '',
             summ: 0,
             comment: '',
             category_id: 0,
+            tags: '',
         },
         catSettings: false,
         newCategory: '',
@@ -87,6 +86,7 @@ const App = new Vue({
             categories: [],
         },
         tableLoading: false,
+        graphView: false,
     },
     computed: {
         categoriesAssoc: function() {
@@ -184,6 +184,9 @@ const App = new Vue({
                     this.summ = response.data.summ;
                     this.page = response.data.operations.current_page;
                     this.categories = response.data.categories;
+                    if (this.graphView) {
+                        this.loadGraph();
+                    }
                     //console.log(response.data);
                 })
                 .catch((error) => {
@@ -393,6 +396,24 @@ const App = new Vue({
             if (e.keyCode === 13) {
                 this.load();
             }
+        },
+        searchTag: function(tag){
+            this.searchForm.searchString = tag;
+            this.load();
+        },
+        clearForm: function() {
+            this.searchForm = {
+                dateMin: '',
+                dateMax: '',
+                searchString: '',
+                summMin: '',
+                summMax: '',
+                categories: [],
+            };
+            this.load();
+        },
+        loadGraph: function () {
+            this.graphView = true;
         },
     },
     created: function () {

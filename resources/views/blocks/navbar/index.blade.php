@@ -9,14 +9,14 @@
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
-            <li class="nav-item @if ($page == 'index') active @endif">
-                <a class="nav-link" href="{{ route('dashboard.index') }}">Моя страница<span class="sr-only">(current)</span></a>
+            <li class="nav-item @if (route::is('dashboard.index')) active @endif">
+                <a class="nav-link" href="{{ route('dashboard.index') }}">Операции</a>
             </li>
             @guest
             @else
-                @if (Auth::user()->level == 3)
+                @if (Auth::user()->level == \App\Models\User::LEVEL_ADMIN)
                     <li class="nav-item">
-                        <a class="nav-link" href="/cms/">@lang('menu.cms') <span class="sr-only">(current)</span></a>
+                        <a class="nav-link" href="{{ route('cms.index') }}">Панель управления</a>
                     </li>
                 @endif
             @endguest

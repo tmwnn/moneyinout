@@ -57,9 +57,9 @@ class OperationsService
      * Сумма дохода
      * @param array $filters поисковая строка
      * @param string $userId ид пользователя
-     * @return int
+     * @return array
      */
-    public function sum($filters, $userId): int
+    public function sum($filters, $userId): array
     {
         return $this->cachedRepository->sum($filters, $userId);
     }

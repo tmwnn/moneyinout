@@ -44,9 +44,9 @@ class CachedOperationRepository implements CachedOperationRepositoryInterface
         });
     }
 
-    public function sum($filters, $userId): int
+    public function sum($filters, $userId): array
     {
-        if (!empty($search) || request()->get('no_cache')) {
+        if (!empty($filters) || request()->get('no_cache')) {
             // для оптимизации кэшируем только без фильтров
             return $this->operationRepository->sum($filters, $userId);
         }

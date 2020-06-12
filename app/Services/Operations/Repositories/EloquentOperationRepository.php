@@ -53,18 +53,26 @@ class EloquentOperationRepository implements OperationRepositoryInterface
     public function search($filters = [], int $userId = 0)
     {
         $Operations = $this->searchByFilters($filters, $userId);
-        return $Operations->orderBy('id', 'desc')->paginate();
+        return $Operations->orderBy('date', 'desc')->paginate();
     }
 
     /**
      * @param array $filters
      * @param int $userId
-     * @return integer
+     * @return array
      */
     public function sum($filters = [], int $userId = 0)
     {
         $Operations = $this->searchByFilters($filters, $userId);
-        return $Operations->sum('summ');
+        $total = $Operations->sum('summ');
+        $income = $Operations->where('summ', '>', 0)->sum('summ');
+        $Operations = $this->searchByFilters($filters, $userId);
+        $outcome = $Operations->where('summ', '<', 0)->sum('summ');
+        return [
+            'total' => $total,
+            'income' => $income,
+            'outcome' => $outcome,
+        ];
     }
 
     /**

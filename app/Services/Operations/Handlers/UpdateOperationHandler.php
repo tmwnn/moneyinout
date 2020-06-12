@@ -32,7 +32,8 @@ class UpdateOperationHandler
     {
         $catName = Category::find($data['category_id'])->name ?? '';
         $data['comment'] = $data['comment'] ?? '';
-        $data['search'] = $catName . ': ' . $data['comment'];
+        $data['tags'] = $data['tags'] ?? '';
+        $data['search'] = "{$catName}: {$data['comment']} {$data['tags']}";
         return $this->operationRepository->updateFromArray($id, $data);
     }
 

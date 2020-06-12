@@ -22,6 +22,7 @@ class CreateOperationsTable extends Migration
             $table->bigInteger('category_id')->unsigned()->comment('Ид категории');
             $table->bigInteger('user_id')->unsigned()->comment('Ид пользователя');
             $table->integer('type')->unsigned()->default(0)->comment('Тип');
+            $table->string('tags')->comment('Тэги');
             $table->timestamps();
             $table->softDeletes();
 

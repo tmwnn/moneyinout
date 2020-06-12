@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string $date Дата
  * @property int $summ Сумма
  * @property string $comment Комментарий
+ * @property string $tags Тэги
  * @property string $search Поисковая строка
  * @property int $type Тип
  * @property int $category_id id категории
@@ -32,7 +33,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Operation extends Model
 {
     use SoftDeletes;
-    public $fillable = ['id', 'date', 'summ', 'comment', 'category_id', 'search', 'type', 'user_id'];
+    public $fillable = ['id', 'date', 'summ', 'comment', 'tags', 'category_id', 'search', 'type', 'user_id'];
     protected $perPage = 10;
 
     public function category() {
