@@ -89,7 +89,7 @@
         </div>
 
         {{-- Таблица --}}
-        <div class="table-responsive" v-if="viewType == 'operations'" v-cloak>
+        <div class="" v-if="viewType == 'operations'" v-cloak>
             <table class="rwd-table" v-if="!!operations.data">
                 <thead>
                 <tr>
