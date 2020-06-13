@@ -98,8 +98,11 @@ class DashboardController extends Controller
             $data = $request->all();
             $userId = \Auth::user()->id ?? 0;
             $data['user_id'] = $userId;
-            $operation = $this->operationsService->store($data);
-
+            if ($userId) {
+                $operation = $this->operationsService->store($data);
+            } else {
+                throw new \Exception('Access denied!');
+            }
         } catch (\Exception $e) {
             //\Log::channel('error')->error(__METHOD__ . ': ' . $e->getMessage());
             return response()->json([
