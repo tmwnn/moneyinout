@@ -36,7 +36,8 @@ class UpdateOperationHandler
         }
         $data['comment'] = $data['comment'] ?? '';
         $data['tags'] = $data['tags'] ?? '';
-        $data['search'] = "{$catName}: {$data['comment']} {$data['tags']}";
+        $date = date('d.m.Y', strtotime($data['date']));
+        $data['search'] = "{$date} {$data['summ']} {$catName}: {$data['comment']} {$data['tags']}";
         return $this->operationRepository->updateFromArray($id, $data);
     }
 

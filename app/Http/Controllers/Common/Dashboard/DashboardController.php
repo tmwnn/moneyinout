@@ -82,7 +82,7 @@ class DashboardController extends Controller
         }
         $ts2 = microtime(true);
         //\Log::channel('info')->debug('Operations/search_and_summ' . ($request->get('no_cache') ? ' (no cache)' : '') . ': '. ($ts2 - $ts1));
-        return response()->json($result,200)->send();
+        return response()->json($result,200);
     }
 
 

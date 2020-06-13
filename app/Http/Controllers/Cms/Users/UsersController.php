@@ -38,8 +38,10 @@ class UsersController extends Controller
      */
     public function index(Request $request)
     {
-        $this->getCurrentUser()->cant(Abilities::VIEW, User::class);
-        $this->authorize(Abilities::VIEW, User::class);
+        if (\Auth::user()->level != User::LEVEL_ADMIN) {
+            $this->getCurrentUser()->cant(Abilities::VIEW, User::class);
+            $this->authorize(Abilities::VIEW, User::class);
+        }
         $search = $request->get('search', '');
         $users = $this->usersService->searchByNameOrEmail($search);
         $levels = $this->usersService->getUserLevels();

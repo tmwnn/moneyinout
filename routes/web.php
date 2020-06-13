@@ -66,3 +66,5 @@ Route::name('dashboard.')->group(function () {
         Route::post('/store_category',  'Common\Dashboard\DashboardController@storeCategory')->name('store_category');
     });
 });
+
+Route::post('/webhook', 'TelegramController@webhook');

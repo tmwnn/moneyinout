@@ -10,7 +10,7 @@ use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-
+use Cache;
 
 class ProfileController extends Controller
 {
@@ -35,6 +35,8 @@ class ProfileController extends Controller
             abort(404);
         }
         $userInfo = $this->usersService->find($userId);
+        $contactIdHashed = md5($userId);
+        $userInfo['telegramUrl'] = 'https://tlgg.ru/MoneyInOutInfo_bot?start=' . $contactIdHashed;
         return view('auth.profile', $userInfo);
     }
 

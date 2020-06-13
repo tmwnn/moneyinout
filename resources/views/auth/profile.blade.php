@@ -1,5 +1,11 @@
 @extends('layouts.base')
 
+@push('scripts')
+    <script type="text/javascript" src="/js/qrcode.min.js"></script>
+    <script type="text/javascript">
+        var telegramUrl = '{{ $telegramUrl ?? '' }}';
+    </script>
+@endpush
 
 @section('content')
 <div class="container">
@@ -70,24 +76,56 @@
                                 </div>
                             </div>
 
+                            <div class="form-group row">
+                                <label for="password-confirm" class="col-md-4 col-form-label text-md-right"></label>
+                                <div class="col-md-6">
+                                    <a href="javascript:void(0);" class="btn btn-info" v-on:click.prevent="changePassword = false">Отмена</a>
+                                </div>
+                            </div>
                         </template>
 
                         <div class="form-group row">
                             <label class="col-md-4 col-form-label text-md-right"></label>
                             <div class="col-md-6">
                                 @if(empty($telegram_chat_id))
-                                    <a href="javascript:void(0);" @click="connectTelegram = !connectTelegram">Привязать Telegram-аккаунт</a>
+                                    <a href="javascript:void(0);" @click="messengerTie">Привязать Telegram-аккаунт</a>
                                 @else
-                                    <a href="javascript:void(0);" @click="document.getElementById('telegram_chat_id').value = 0">Отвязать Telegram-аккаунт</a>
+                                    <a href="javascript:void(0);" @click="messengerUnTie">Отвязать Telegram-аккаунт</a>
                                 @endif
                                 <br/>
-                                <input type="text" name="telegram_chat_id" id="telegram_chat_id" value="{{ $telegram_chat_id }}" class="input"/>
+                                <input type="hidden" name="telegram_chat_id" id="telegram_chat_id" value="{{ $telegram_chat_id }}" class="input"/>
+
+                                    <div v-show="connectTelegram" class="top_20" v-cloak>
+                                        <div class="cb_modal_window cb_modal_access_req_window">
+                                            {{--<a href="javascript:void(0);" class="modal_close close js_modal_close">×</a>--}}
+                                            <div class="cb_modal_body">
+                                                <div class="cb_indent_top_20">
+                                                    <ul class="messenger_modal_list" style="list-style-type:disc;">
+                                                        <li>
+                                                            <p id="messenger_qr_code" v-html="messenger_qr_code"></p>
+                                                            <div id="qrcode" style="width: 255px; margin:0 auto;"></div>
+                                                        </li>
+                                                        <li>
+                                                            <p id="install_messenger_link" v-html="install_telegram_message"></p>
+                                                        </li>
+                                                        <li>
+                                                            <span id="open_messenger_msg" v-html="open_messenger_msg"></span>
+                                                            <a :href="messengerUrl" target="_blank" @click="messengerTie">ссылке</a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <a href="javascript:void(0);" class="btn btn-info" v-on:click.prevent="connectTelegram = false">Отмена</a>
+                                    </div>
                             </div>
+
+
                         </div>
 
                         <div class="form-group row mb-0">
                             <div class="col-md-6 offset-md-4">
-                                <button type="submit" class="btn btn-primary">
+                                <button type="submit" id="submitBtn" class="btn btn-primary">
                                     Сохранить
                                 </button>
                             </div>

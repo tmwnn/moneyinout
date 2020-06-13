@@ -91,6 +91,12 @@ const App = new Vue({
         groupType: 'm',
         changePassword: false,
         connectTelegram: false,
+        messengerTieWindow: false,
+        messenger_field: '',
+        messenger_qr_code: '',
+        install_telegram_message: '',
+        open_messenger_msg: '',
+        messengerUrl: '',
     },
     computed: {
         categoriesAssoc: function() {
@@ -558,6 +564,22 @@ const App = new Vue({
             this.filtersSettings = true;
             this.load();
         },
+        messengerTie: function () {
+            this.messenger_qr_code = 'Чтобы открыть Telegram на телефоне просканируйте код:';
+            this.install_telegram_message = 'Установить Telegram на компьютер можно по <a href="https://tlgrm.ru/" target="_blank">ссылке</a>';
+            this.open_messenger_msg = 'Чтобы открыть Telegram на компьютере перейдите по';
+            this.messengerUrl = typeof(telegramUrl) !== 'undefined' ? telegramUrl.toString() : '';
+            document.getElementById('qrcode').innerHTML = '';
+            let qrcode = new QRCode('qrcode', {width: 230, height: 230});
+            qrcode.clear();
+            qrcode.makeCode(this.messengerUrl);
+            this.connectTelegram = true;
+        },
+        messengerUnTie: function () {
+            document.getElementById('telegram_chat_id').value = 0;
+            document.getElementById('submitBtn').click();
+        }
+
     },
     created: function () {
         if (typeof(loadUrl) !== 'undefined') {
