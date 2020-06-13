@@ -53,7 +53,7 @@ class EloquentOperationRepository implements OperationRepositoryInterface
     public function search($filters = [], int $userId = 0)
     {
         $Operations = $this->searchByFilters($filters, $userId);
-        return $Operations->orderBy('date', 'desc')->paginate();
+        return $Operations->orderBy('date', 'desc')->orderBy('id', 'desc')->paginate();
     }
 
     /**
