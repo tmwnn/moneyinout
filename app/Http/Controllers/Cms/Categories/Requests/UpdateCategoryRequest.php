@@ -17,7 +17,7 @@ class UpdateCategoryRequest extends FormRequest
     {
         $id = $this->request->get('id', 0);
         return [
-            'name' => 'required|unique:countries,name,' . $id . '|max:255',
+            'name' => 'required|unique:categories,name,' . $id . '|max:255',
         ];
     }
 

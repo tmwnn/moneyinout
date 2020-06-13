@@ -29,7 +29,7 @@ class EloquentCategoryRepository implements CategoryRepositoryInterface
         } else {
             $categories = Category::orderBy('id', 'desc')->paginate();
         }
-        $categories->load('users');
+        $categories->load('user');
         return $categories;
     }
 

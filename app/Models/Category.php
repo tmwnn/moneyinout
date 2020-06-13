@@ -29,7 +29,7 @@ class Category extends Model
 {
     use SoftDeletes;
     public $fillable = ['id', 'name', 'user_id'];
-    public function users() {
+    public function user() {
         return $this->hasOne('App\Models\User','id', 'user_id');
     }
 }

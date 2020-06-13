@@ -27,7 +27,7 @@ Route::name('cms.')->group(function () {
 
 
         Route::name('categories.')->group(function () {
-            Route::prefix('countries')->group(function() {
+            Route::prefix('categories')->group(function() {
                 Route::any('/',  'Cms\Categories\CategoriesController@index')->name('index');
                 Route::post('/store',  'Cms\Categories\CategoriesController@store')->name('store');
                 Route::post('/update',  'Cms\Categories\CategoriesController@update')->name('update');

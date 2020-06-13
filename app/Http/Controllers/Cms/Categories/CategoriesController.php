@@ -43,8 +43,8 @@ class CategoriesController extends Controller
         $name = $request->get('name', '');
         $ts1 = microtime(true);
         $data = $this->categoriesService->searchByNames((string)$name);
-        $users[''] = '';
         $users = User::all()->pluck('name', 'id');
+        $users[''] = '';
         $ts2 = microtime(true);
         //\Log::channel('info')->debug('Categories/searchByNames' . ($request->get('no_cache') ? ' (no cache)' : '') . ': '. ($ts2 - $ts1));
         return view('cms.categories', [
