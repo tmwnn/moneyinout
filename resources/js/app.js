@@ -459,10 +459,13 @@ const App = new Vue({
                     ]);
                 }
             }
-
+            let height = '60%';
+            if (document.querySelector('body').clientWidth <= 500) {
+                height = '300';
+            }
             Highcharts.stockChart('container', {
                 chart: {
-                    height: '60%'
+                    height: height,
                 },
                 rangeSelector: {
                     selected: 'all'
