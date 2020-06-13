@@ -98,7 +98,7 @@ class DashboardController extends Controller
             $data = $request->all();
             $userId = \Auth::user()->id ?? 0;
             $data['user_id'] = $userId;
-            $operation = $this->operationsService->store($request->all());
+            $operation = $this->operationsService->store($data);
 
         } catch (\Exception $e) {
             //\Log::channel('error')->error(__METHOD__ . ': ' . $e->getMessage());

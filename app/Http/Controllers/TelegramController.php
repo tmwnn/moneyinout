@@ -48,14 +48,7 @@ class TelegramController extends Controller
                         $this->sendMessage($telegramId, '', [ 'keyboard' => $keyboard, 'resize_keyboard' => true, 'one_time_keyboard' => false ]);
                     }
                     elseif ($text == 'list') {
-                        $items = $this->operationsService->search([], $userId)->items();
-                        //\Log::channel('info')->debug(json_encode($items));
-
-                        $result = '';
-                        foreach ($items as $row) {
-                            $result .= "{$row['search']}\n";
-                        }
-                        $this->sendMessage($telegramId, $result);
+                        $this->showList([], $userId, $telegramId);
                     }
                     elseif ($text == 'stat') {
                         $items = $this->operationsService->stat([], $userId, 'm', 'stat');
@@ -72,22 +65,18 @@ class TelegramController extends Controller
                         $date = date('Y-m-d');
                         $summ = $tmpArr[1];
                         $comment = $tmpArr[2];
-                        $this->addOperation($date, $summ, $comment);
+                        $this->addOperation($date, $summ, $comment, $userId);
+                        $this->showList([], $userId, $telegramId);
                     }
                     elseif (preg_match('/^(\d{2}.\d{2}.\d{4})\s+(-*\d+)\s+(.+)$/', $text, $tmpArr)) {
                         $date = date('Y-m-d', strtotime($tmpArr[1]));
                         $summ = $tmpArr[2];
                         $comment = $tmpArr[3];
-                        $this->addOperation($date, $summ, $comment);
+                        $this->addOperation($date, $summ, $comment, $userId);
+                        $this->showList([], $userId, $telegramId);
                     }
                     elseif (preg_match('/^(s|search)\s+(.+)$/', $text, $tmpArr)) {
-                        $items = $this->operationsService->search(['searchString' => $tmpArr[2]], $userId)->items();
-                        \Log::channel('info')->debug(json_encode($items));
-                        $result = '';
-                        foreach ($items as $row) {
-                            $result .= "{$row['search']}\n";
-                        }
-                        $this->sendMessage($telegramId, $result);
+                        $this->showList(['searchString' => $tmpArr[2]], $userId, $telegramId);
                     }
                     else {
                         $this->sendMessage(
@@ -101,7 +90,7 @@ class TelegramController extends Controller
         }
     }
 
-    private function addOperation($date, $summ, $comment)
+    private function addOperation($date, $summ, $comment, $userId)
     {
         $cat = Category::where('name', $comment)->first();
         if (!empty($cat->id)) {
@@ -129,10 +118,6 @@ class TelegramController extends Controller
             $comment = trim($tmpArrT[1]);
             $tags = '#' . trim($tmpArrT[2]);
         }
-        if (preg_match('/(.*)(wildberries|bonprix)/', $comment, $tmpArrT)) {
-            $comment = trim($tmpArrT[1]);
-            $tags = '#' . trim($tmpArrT[2]);
-        }
 
         $item = [
             'date' => $date,
@@ -141,10 +126,20 @@ class TelegramController extends Controller
             'comment' => $comment,
             'tags' => $tags,
             'type' => 0,
-            'user_id' => 1,
+            'user_id' => $userId,
         ];
         //dump($item);
         $this->operationsService->store($item);
+    }
+
+    private function showList($filters, $userId, $telegramId)
+    {
+        $items = $this->operationsService->search($filters, $userId)->items();
+        $result = '';
+        foreach ($items as $row) {
+            $result .= "{$row['search']}\n";
+        }
+        $this->sendMessage($telegramId, $result);
     }
 
     private function sendMessage($telegramId, $text, $replyMarkup = [])
