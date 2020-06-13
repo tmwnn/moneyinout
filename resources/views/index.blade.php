@@ -10,10 +10,10 @@
                 <input type="text" class="form-control" placeholder="Что ищем" aria-label="Что ищем" aria-describedby="basic-addon2"
                        v-model="searchForm.searchString" v-on:keyup="searchStringKeyup" >
                 <div class="input-group-append">
-                    <button class="input-group-text fa  fa-search text-success" @click="load" title="Найти">&nbsp;</button>
+                    <button class="input-group-text fa  fa-search text-success" @click="page=1;load();" title="Найти">&nbsp;</button>
                 </div>
                 <div class="input-group-append">
-                    <button class="input-group-text fa  fa-close" @click="clearForm" title="Очистить">&nbsp;</button>
+                    <button class="input-group-text fa  fa-close" @click="page=1;clearForm();" title="Очистить">&nbsp;</button>
                 </div>
                 <div class="input-group-append">
                     <button class="input-group-text fa fa-cog" @click="filtersSettings = !filtersSettings" title="Расширенный поиск">&nbsp;</button>
@@ -152,9 +152,13 @@
                                 <input type="text" class="form-control" v-model="editItem.summ" />
                             </template>
                         </td>
-                        <td data-th="Категория">
+                        <td data-th="Категория" @click="newItem.category_id = item.category_id">
                             <template v-if="edit != item.id">
-                                <span @click="newItem.category_id = item.category_id">@{{ categoriesAssoc[item.category_id] }}</span>
+                                <span>
+                                    <a href="javascript:void(0);"
+                                       @click="searchForm.categories = [{code: item.category_id, label: categoriesAssoc[item.category_id]}];filtersSettings=true;page=1;load();"
+                                    >@{{ categoriesAssoc[item.category_id] }}</a>
+                                </span>
                             </template>
                             <template v-else>
                                 <v-select :options="categoriesSelect" v-model="xEditCategory" :clearable="false"></v-select>
@@ -238,7 +242,9 @@
                             <th>Остаток</th>
                         </tr>
                         <tr v-for="item in stat">
-                            <td data-th="Дата" v-html="dateConvert(item.group)"></td>
+                            <td data-th="Дата">
+                                <a href="javascript:void(0)" v-html="dateConvert(item.group)" @click="searchGroup(item.group)"></a>
+                            </td>
                             <td data-th="Расход" v-html="item.outcome"></td>
                             <td data-th="Доход" v-html="item.income"></td>
                             <td data-th="Остаток" v-html="item.total"></td>

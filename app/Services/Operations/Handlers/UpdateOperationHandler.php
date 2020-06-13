@@ -30,7 +30,10 @@ class UpdateOperationHandler
      */
     public function handle(int $id, array $data): Operation
     {
-        $catName = Category::find($data['category_id'])->name ?? '';
+        $catName = '';
+        if (!empty($data['category_id'])) {
+            $catName = Category::find($data['category_id'])->name ?? '';
+        }
         $data['comment'] = $data['comment'] ?? '';
         $data['tags'] = $data['tags'] ?? '';
         $data['search'] = "{$catName}: {$data['comment']} {$data['tags']}";

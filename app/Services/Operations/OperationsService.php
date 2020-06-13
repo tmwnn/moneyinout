@@ -42,6 +42,17 @@ class OperationsService
         $this->cachedRepository = $cachedOperationRepository;
     }
 
+
+    /**
+     * Поиск записи
+     * @param integer $id ид
+     * @return Operation
+     */
+    public function find($id): Operation
+    {
+        return $this->repository->find($id);
+    }
+
     /**
      * Поиск и выдача результата
      * @param array $filters поисковые фильтры

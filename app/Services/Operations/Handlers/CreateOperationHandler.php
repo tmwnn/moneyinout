@@ -29,8 +29,11 @@ class CreateOperationHandler
      */
     public function handle(array $data): Operation
     {
-        $data['user_id'] = \Auth::user()->id;
-        $catName = Category::find($data['category_id'])->name ?? '';
+        //$data['user_id'] = \Auth::user()->id;
+        $catName = '';
+        if (!empty($data['category_id'])) {
+            $catName = Category::find($data['category_id'])->name ?? '';
+        }
         $data['comment'] = $data['comment'] ?? '';
         $data['tags'] = $data['tags'] ?? '';
         $data['search'] = "{$catName}: {$data['comment']} {$data['tags']}";

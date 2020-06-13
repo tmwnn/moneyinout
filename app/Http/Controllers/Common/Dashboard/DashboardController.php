@@ -95,7 +95,10 @@ class DashboardController extends Controller
     public function store(StoreOperationRequest $request): string
     {
         try {
-            $country = $this->operationsService->store($request->all());
+            $data = $request->all();
+            $userId = \Auth::user()->id ?? 0;
+            $data['user_id'] = $userId;
+            $operation = $this->operationsService->store($request->all());
 
         } catch (\Exception $e) {
             //\Log::channel('error')->error(__METHOD__ . ': ' . $e->getMessage());
@@ -104,7 +107,7 @@ class DashboardController extends Controller
                 'errors' => [[$e->getMessage()]],
             ], 400)->send();
         }
-        return response()->json($country, 200)->send();
+        return response()->json($operation, 200)->send();
     }
 
     /**
@@ -116,8 +119,14 @@ class DashboardController extends Controller
     public function update(Request $request): string
     {
         $id = (int)$request->get('id', 0);
+        $userId = \Auth::user()->id ?? 0;
         try {
-            $category = $this->operationsService->update($id, $request->all());
+            $operation = $this->operationsService->find($id);
+            if ($operation->user_id == $userId) {
+                $operation = $this->operationsService->update($id, $request->all());
+            } else {
+                throw new \Exception('Access denied!');
+            }
         } catch (\Exception $e) {
             //\Log::channel('error')->error(__METHOD__ . ': ' . $e->getMessage());
             return response()->json([
@@ -125,7 +134,7 @@ class DashboardController extends Controller
                 'errors' => [[ $e->getMessage() ]],
             ], 400)->send();
         }
-        return json_encode($category);
+        return json_encode($operation);
     }
 
 
@@ -138,8 +147,14 @@ class DashboardController extends Controller
     public function delete(Request $request): string
     {
         $id = $request->get('id');
+        $userId = \Auth::user()->id ?? 0;
         try {
-            $this->operationsService->delete($id);
+            $operation = $this->operationsService->find($id);
+            if ($operation->user_id == $userId) {
+                $this->operationsService->delete($id);
+            } else {
+                throw new \Exception('Access denied!');
+            }
         } catch (\Exception $e) {
             //\Log::channel('error')->error(__METHOD__ . ': ' . $e->getMessage());
             return response()->json([

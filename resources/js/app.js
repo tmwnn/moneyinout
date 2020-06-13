@@ -407,11 +407,13 @@ const App = new Vue({
         },
         searchStringKeyup: function (e) {
             if (e.keyCode === 13) {
+                this.page = 1;
                 this.load();
             }
         },
         searchTag: function(tag){
             this.searchForm.searchString = tag;
+            this.page = 1;
             this.load();
         },
         clearForm: function() {
@@ -521,7 +523,41 @@ const App = new Vue({
         changeGroupType: function (type) {
             this.groupType = type;
             this.load();
-        }
+        },
+        searchGroup: function (group) {
+            let dateMin = group;
+            let dateMax = group;
+            if (group.toString().length == 4) {
+                dateMin += '-01-01';
+                dateMax += '-12-31';
+            }
+            if (group.toString().length == 7) {
+                dateMin += '-01';
+
+                if (/-(04|06|09|11)$/.test(group)) {
+                    dateMax += '-30';
+                } else if (group == '2020-02' || group == '2016-02' || group == '2012-02') {
+                    dateMax += '-29';
+                } else if (/-(02)$/.test(group)) {
+                    dateMax += '-28';
+                } else {
+                    dateMax += '-31';
+                }
+            }
+
+            this.searchForm = {
+                dateMin: dateMin,
+                dateMax: dateMax,
+                searchString: '',
+                summMin: '',
+                summMax: '',
+                categories: [],
+            };
+            this.page = 1;
+            this.viewType = 'operations';
+            this.filtersSettings = true;
+            this.load();
+        },
     },
     created: function () {
         if (typeof(loadUrl) !== 'undefined') {
