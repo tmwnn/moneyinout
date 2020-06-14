@@ -230,4 +230,5 @@ return [
         'NoCaptcha' => Anhskohbo\NoCaptcha\Facades\NoCaptcha::class,
     ],
 
+    'telegramApiToken' => env('TELEGRAM_API_TOKEN', ''),
 ];

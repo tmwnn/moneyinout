@@ -92,6 +92,7 @@ class TelegramController extends Controller
 
     private function addOperation($date, $summ, $comment, $userId)
     {
+        $category_id = 0;
         $cat = Category::where('name', $comment)->first();
         if (!empty($cat->id)) {
             $category_id = $cat->id;
@@ -144,7 +145,7 @@ class TelegramController extends Controller
 
     private function sendMessage($telegramId, $text, $replyMarkup = [])
     {
-        $token = '1113800582:AAGDm_daAzqwGyKLTR5eTcn5nsx6tvz0tZE';
+        $token = config('app.telegramApiToken');
         if ($token) {
             $url = 'https://api.telegram.org/bot' . $token . '/sendMessage';
             $data = array(
