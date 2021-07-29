@@ -21,7 +21,15 @@ class CategoriesTableSeeder extends Seeder
             array('id' => '7','name' => 'Коммунальные платежи'),
             array('id' => '8','name' => 'Животные'),
             array('id' => '9','name' => 'Медицина'),
+            array('id' => '10','name' => 'Работа'),
         ));
-        Factory(Category::class, 20)->create();
+        DB::table('categories')->insert(array(
+            array('id' => '11','name' => 'VPS', 'user_id' => 1),
+        ));
+        DB::table('categories')->insert(array(
+            array('id' => '100','name' => 'Без категории'),
+        ));
+        DB::table('categories')->where('id',100)->update(['id' => 0]);
+        //Factory(Category::class, 20)->create();
     }
 }
