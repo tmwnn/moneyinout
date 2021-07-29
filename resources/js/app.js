@@ -566,14 +566,9 @@ const App = new Vue({
                 }
             }
 
-            this.searchForm = {
-                dateMin: dateMin,
-                dateMax: dateMax,
-                searchString: '',
-                summMin: '',
-                summMax: '',
-                categories: [],
-            };
+            this.searchForm.dateMin = dateMin;
+            this.searchForm.dateMax = dateMax;
+
             this.page = 1;
             this.viewType = 'operations';
             this.filtersSettings = true;
