@@ -112,7 +112,7 @@
                             <date-picker v-model="xNewDate" :format="'DD.MM.YYYY'"></date-picker>
                         </td>
                         <td data-th="Сумма">
-                            <input type="text" class="form-control" v-model="newItem.summ"/>
+                            <input type="text" class="form-control" v-model="newItem.summ" @keyup.enter="storeRow('{{ route('dashboard.store') }}')"/>
                         </td>
                         <td data-th="Категория">
                            {{-- <input type="text" class="form-control" v-model="newItem.category_id"/>--}}
@@ -124,10 +124,10 @@
                             </v-select>
                         </td>
                         <td data-th="Комментарий">
-                            <input type="text" class="form-control"  v-model="newItem.comment"/>
+                            <input type="text" class="form-control"  v-model="newItem.comment" @keyup.enter="storeRow('{{ route('dashboard.store') }}')"/>
                         </td>
                         <td data-th="Тэги">
-                            <input type="text" class="form-control"  v-model="newItem.tags"/>
+                            <input type="text" class="form-control"  v-model="newItem.tags" @keyup.enter="storeRow('{{ route('dashboard.store') }}')"/>
                         </td>
                         <td>
                             <a href="javascript:void(0);" @click="storeRow('{{ route('dashboard.store') }}')" class="text-success fa fa-2x fa-save" title="Добавить"></a>
@@ -149,7 +149,7 @@
                                 <span @click="newItem.summ = item.summ">@{{ item.summ }}</span>
                             </template>
                             <template v-else>
-                                <input type="text" class="form-control" v-model="editItem.summ" />
+                                <input type="text" class="form-control" v-model="editItem.summ" @keyup.enter="saveRow('{{ route('dashboard.update') }}', item.id)"/>
                             </template>
                         </td>
                         <td data-th="Категория" @click="newItem.category_id = item.category_id">
@@ -169,7 +169,7 @@
                                 <span @click="newItem.comment = item.comment">@{{ item.comment }}</span>
                             </template>
                             <template v-else>
-                                <input type="text" class="form-control" v-model="editItem.comment"/>
+                                <input type="text" class="form-control" v-model="editItem.comment" @keyup.enter="saveRow('{{ route('dashboard.update') }}', item.id)"/>
                             </template>
                         </td>
                         <td data-th="Тэги">
@@ -179,7 +179,7 @@
                                 </template>
                             </template>
                             <template v-else>
-                                <input type="text" class="form-control" v-model="editItem.tags"/>
+                                <input type="text" class="form-control" v-model="editItem.tags" @keyup.enter="saveRow('{{ route('dashboard.update') }}', item.id)"/>
                             </template>
                         </td>
 
