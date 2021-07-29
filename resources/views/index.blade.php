@@ -22,9 +22,9 @@
             <div v-if="filtersSettings" v-cloak class="row">
                 <div class="col-3 text-nowrap">
                     Дата<br/>
-                    <div style="display: inline-block;width: 120px;"><date-picker :format="'DD.MM.YYYY'" v-model="xSearchDateMin"></date-picker></div>
+                    <div style="display: inline-block;width: 120px;"><date-picker :format="'DD.MM.YYYY'" v-model="xSearchDateMin" :first-day-of-week="1"></date-picker></div>
                     -
-                    <div style="display: inline-block;width: 120px;"><date-picker :format="'DD.MM.YYYY'" v-model="xSearchDateMax"></date-picker></div>
+                    <div style="display: inline-block;width: 120px;"><date-picker :format="'DD.MM.YYYY'" v-model="xSearchDateMax" :first-day-of-week="1"></date-picker></div>
                 </div>
                 <div class="col-4">
                     Категория
@@ -119,7 +119,7 @@
                     {{-- Новая операция --}}
                     <tr>
                         <td data-th="Дата">
-                            <date-picker v-model="xNewDate" :format="'DD.MM.YYYY'"></date-picker>
+                            <date-picker v-model="xNewDate" :format="'DD.MM.YYYY'" first-day-of-week="1"></date-picker>
                         </td>
                         <td data-th="Сумма">
                             <input type="text" class="form-control" v-model="newItem.summ" @keyup.enter="storeRow('{{ route('dashboard.store') }}')"/>
@@ -156,7 +156,7 @@
                                 <span @click="newItem.date = item.date">@{{ dateConvert(item.date) }}</span>
                             </template>
                             <template v-else>
-                               <date-picker v-model="xEditDate" :format="'DD.MM.YYYY'"></date-picker>
+                               <date-picker v-model="xEditDate" :format="'DD.MM.YYYY'" first-day-of-week="1"></date-picker>
                             </template>
                         </td>
                         <td data-th="Сумма" class="summ">
