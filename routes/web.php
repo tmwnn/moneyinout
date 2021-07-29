@@ -47,6 +47,10 @@ Route::name('cms.')->group(function () {
 });
 
 Route::get('/', function () {
+    $userId = \Auth::user()->id ?? 0;
+    if ($userId) {
+        return redirect(route('dashboard.index'));
+    }
     return view('welcome');
 })->middleware([
     'ShareCommonData'

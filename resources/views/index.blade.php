@@ -20,13 +20,13 @@
                 </div>
             </div>
             <div v-if="filtersSettings" v-cloak class="row">
-                <div class="col">
+                <div class="col-3 text-nowrap">
                     Дата<br/>
                     <div style="display: inline-block;width: 120px;"><date-picker :format="'DD.MM.YYYY'" v-model="xSearchDateMin"></date-picker></div>
                     -
                     <div style="display: inline-block;width: 120px;"><date-picker :format="'DD.MM.YYYY'" v-model="xSearchDateMax"></date-picker></div>
                 </div>
-                <div class="col">
+                <div class="col-4">
                     Категория
                     <v-select :options="categoriesSelect" :clearable="true" :multiple="true" v-model="searchForm.categories">
                         <template #option="{ code, label, user_id }">
@@ -35,11 +35,19 @@
                         </template>
                     </v-select>
                 </div>
-                <div class="col">
+                <div class="col-3">
                     Сумма<br/>
                     <input type="text" class="form-control" v-model="searchForm.summMin" style="width: 100px;display: inline-block;"/>
                     -
                     <input type="text" class="form-control" v-model="searchForm.summMax" style="width: 100px;display: inline-block;"/>
+                </div>
+                <div class="col-2">
+                    Ежемесячная<br/>
+                    <select class="form-control" v-model="searchForm.type" @change="page=1;load();">
+                        <option value="">...</option>
+                        <option value="0">Нет</option>
+                        <option value="1">Да</option>
+                    </select>
                 </div>
             </div>
             <hr/>
@@ -132,7 +140,7 @@
                             <input type="text" class="form-control"  v-model="newItem.tags" @keyup.enter="storeRow('{{ route('dashboard.store') }}')"/>
                         </td>
                         <td data-th="Ежемесячная">
-                            <input type="checkbox" v-model="newItem.type"/>
+                            <input type="checkbox"  v-model="newItem.type" value="1"/>
                         </td>
                         <td>
                             <a href="javascript:void(0);" @click="storeRow('{{ route('dashboard.store') }}')" class="text-success fa fa-2x fa-save" title="Добавить"></a>
@@ -166,6 +174,7 @@
                                        @click="searchForm.categories = [{code: item.category_id, label: categoriesAssoc[item.category_id]}];filtersSettings=true;page=1;load();"
                                     >@{{ categoriesAssoc[item.category_id] }}</a>
                                 </span>
+                                <i v-if="item.category_id" class="fa fa-copy" @click="newItem.category_id = item.category_id" style="opacity: .3;"></i>
                             </template>
                             <template v-else>
                                 <v-select :options="categoriesSelect" v-model="xEditCategory" :clearable="false"></v-select>
@@ -183,19 +192,20 @@
                             <template v-if="edit != item.id">
                                 <template v-for="tag in item.tags.split(' ')">
                                     <a href="javascript:void(0);" @click="searchTag(tag)" class="mr-1">@{{ tag }}</a>
+                                    <i v-if="item.tags" class="fa fa-copy" @click="newItem.tags = item.tags" style="opacity: .3;"></i>
                                 </template>
                             </template>
                             <template v-else>
                                 <input type="text" class="form-control" v-model="editItem.tags" @keyup.enter="saveRow('{{ route('dashboard.update') }}', item.id)"/>
                             </template>
                         </td>
-                        <td data-th="Ежемесячная">
+                        <td data-th="Ежемесячная" @click="newItem.type = item.type">
 
                             <template v-if="edit != item.id">
-                                <i v-if="item.type" class="fa fa-check fa-2x"></i>
+                                <i v-if="item.type" class="fa fa-check" ></i>
                             </template>
                             <template v-else>
-                                <input type="checkbox" v-model="editItem.type"/>
+                                <input type="checkbox" v-model="editItem.type" value="1"/>
                             </template>
                         </td>
 

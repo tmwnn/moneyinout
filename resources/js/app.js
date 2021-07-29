@@ -67,6 +67,7 @@ const App = new Vue({
             comment: '',
             category_id: 0,
             tags: '',
+            type: 0,
         },
         editItem: {
             date: '',
@@ -74,6 +75,7 @@ const App = new Vue({
             comment: '',
             category_id: 0,
             tags: '',
+            type: 0,
         },
         catSettings: false,
         newCategory: '',
@@ -85,6 +87,7 @@ const App = new Vue({
             summMin: '',
             summMax: '',
             categories: [],
+            type: '',
         },
         tableLoading: false,
         viewType: 'operations', // operations
@@ -252,6 +255,14 @@ const App = new Vue({
             axios.post(url, this.newItem)
                 .then((response) => {
                     if (this.checkResult(response.data)) {
+                        this.newItem = {
+                            date: typeof(curDate) !== "undefined" ? curDate : new Date().toISOString().substring(0,10),
+                            summ: 0,
+                            comment: '',
+                            category_id: 0,
+                            tags: '',
+                            type: 0,
+                        };
                         this.load();
                     }
                 })
@@ -430,6 +441,7 @@ const App = new Vue({
                 summMin: '',
                 summMax: '',
                 categories: [],
+                type: '',
             };
             this.load();
         },

@@ -41,6 +41,9 @@ class EloquentOperationRepository implements OperationRepositoryInterface
                 $categoriesIds = array_map('intval', $categoriesIds);
                 $Operations->whereIn('category_id', $categoriesIds);
             }
+            if (strlen($filters['type'])) {
+                $Operations->where('type', intval($filters['type']));
+            }
         }
         return $Operations;
     }
