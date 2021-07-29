@@ -103,10 +103,12 @@
                     </th>
                     <th scope="col">Комментарий</th>
                     <th scope="col">Тэги</th>
+                    <th scope="col">Ежемесячная</th>
                     <th scope="col">Действие</th>
                 </tr>
                 </thead>
                 <tbody>
+                    {{-- Новая операция --}}
                     <tr>
                         <td data-th="Дата">
                             <date-picker v-model="xNewDate" :format="'DD.MM.YYYY'"></date-picker>
@@ -129,11 +131,16 @@
                         <td data-th="Тэги">
                             <input type="text" class="form-control"  v-model="newItem.tags" @keyup.enter="storeRow('{{ route('dashboard.store') }}')"/>
                         </td>
+                        <td data-th="Ежемесячная">
+                            <input type="checkbox" v-model="newItem.type"/>
+                        </td>
                         <td>
                             <a href="javascript:void(0);" @click="storeRow('{{ route('dashboard.store') }}')" class="text-success fa fa-2x fa-save" title="Добавить"></a>
                             <a href="javascript:void(0);" class="ml-1 text-danger fa fa-2x fa-trash" title="Очистить"></a>
                         </td>
                     </tr>
+
+                    {{-- Список операций --}}
                     <tr v-for="item in operations.data" v-on:dblclick="editRow(item.id)" v-bind:class="{'text-success': item.summ > 0}">
                         {{--<td>{{ $item->id }}</td>--}}
                         <td data-th="Дата" class="date">
@@ -182,7 +189,15 @@
                                 <input type="text" class="form-control" v-model="editItem.tags" @keyup.enter="saveRow('{{ route('dashboard.update') }}', item.id)"/>
                             </template>
                         </td>
+                        <td data-th="Ежемесячная">
 
+                            <template v-if="edit != item.id">
+                                <i v-if="item.type" class="fa fa-check fa-2x"></i>
+                            </template>
+                            <template v-else>
+                                <input type="checkbox" v-model="editItem.type"/>
+                            </template>
+                        </td>
 
                         <td data-th="Действие">
                             <template v-if="edit != item.id">
