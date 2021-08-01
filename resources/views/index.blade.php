@@ -144,7 +144,7 @@
                         </td>
                         <td>
                             <a href="javascript:void(0);" @click="storeRow('{{ route('dashboard.store') }}')" class="text-success fa fa-2x fa-save" title="Добавить"></a>
-                            <a href="javascript:void(0);" class="ml-1 text-danger fa fa-2x fa-trash" title="Очистить"></a>
+                            <a href="javascript:void(0);" class="ml-1 text-danger fa fa-2x fa-trash" @click="clearNewItem()" title="Очистить"></a>
                         </td>
                     </tr>
 

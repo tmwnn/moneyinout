@@ -233,16 +233,21 @@ const App = new Vue({
                 })
             ;
         },
+        clearNewItem: function () {
+            this.newItem = {
+                date: typeof(curDate) !== "undefined" ? curDate : new Date().toISOString().substring(0,10),
+                summ: 0,
+                comment: '',
+                category_id: 0,
+                tags: '',
+                type: 0,
+            };
+        },
         saveRow: function (url, id) {
             axios.post(url, this.editItem)
                 .then((response) => {
                     if (this.checkResult(response.data)) {
-                        this.newItem = {
-                            date: curDate,
-                            summ: 0,
-                            comment: '',
-                            category_id: 0,
-                        };
+                        //this.clearNewItem();
                         this.load();
                     }
                 })
@@ -256,14 +261,7 @@ const App = new Vue({
             axios.post(url, this.newItem)
                 .then((response) => {
                     if (this.checkResult(response.data)) {
-                        this.newItem = {
-                            date: typeof(curDate) !== "undefined" ? curDate : new Date().toISOString().substring(0,10),
-                            summ: 0,
-                            comment: '',
-                            category_id: 0,
-                            tags: '',
-                            type: 0,
-                        };
+                        this.clearNewItem();
                         this.load();
                     }
                 })
