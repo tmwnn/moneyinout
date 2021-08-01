@@ -78,10 +78,14 @@ class DashboardController extends Controller
      * @param Request $request
      * @return string
      */
-    public function store(StoreOperationRequest $request): string
+    public function store(Request $request): string
     {
         try {
             $data = $request->all();
+            if (!empty($data['summ'])) {
+                $data['summ'] = str_replace(',','.', $data['summ']);
+                $data['summ'] = preg_replace('/[^\d\.\-]/', '', $data['summ']);
+            }
             $userId = \Auth::user()->id ?? 0;
             $data['user_id'] = $userId;
             if ($userId) {
@@ -109,10 +113,15 @@ class DashboardController extends Controller
     {
         $id = (int)$request->get('id', 0);
         $userId = \Auth::user()->id ?? 0;
+        $data = $request->all();
+        if (!empty($data['summ'])) {
+            $data['summ'] = str_replace(',','.', $data['summ']);
+            $data['summ'] = preg_replace('/[^\d\.\-]/', '', $data['summ']);
+        }
         try {
             $operation = $this->operationsService->find($id);
             if ($operation->user_id == $userId) {
-                $operation = $this->operationsService->update($id, $request->all());
+                $operation = $this->operationsService->update($id, $data);
             } else {
                 throw new \Exception('Access denied!');
             }
