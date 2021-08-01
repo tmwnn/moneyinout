@@ -13,7 +13,7 @@ interface CachedOperationRepositoryInterface
 
     public function sum($filters, $userId);
 
-    public function search($filters, $userId);
+    public function search($filters, $userId, $limit = 10);
 
     public function clearSearchCache();
 

@@ -53,10 +53,10 @@ class EloquentOperationRepository implements OperationRepositoryInterface
      * @param int $userId
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
-    public function search($filters = [], int $userId = 0)
+    public function search($filters = [], int $userId = 0, $limit = 10)
     {
         $Operations = $this->searchByFilters($filters, $userId);
-        return $Operations->orderBy('date', 'desc')->orderBy('id', 'desc')->paginate();
+        return $Operations->orderBy('date', 'desc')->orderBy('id', 'desc')->paginate($limit);
     }
 
     /**

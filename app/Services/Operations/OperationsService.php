@@ -57,11 +57,12 @@ class OperationsService
      * Поиск и выдача результата
      * @param array $filters поисковые фильтры
      * @param string $userId ид пользователя
+     * @param int $limit
      * @return LengthAwarePaginator
      */
-    public function search($filters, $userId): LengthAwarePaginator
+    public function search($filters, $userId, $limit = 10): LengthAwarePaginator
     {
-        return $this->cachedRepository->search($filters, $userId);
+        return $this->cachedRepository->search($filters, $userId, $limit);
     }
 
     /**

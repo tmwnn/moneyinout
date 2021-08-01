@@ -52,7 +52,8 @@ class DashboardController extends Controller
     {
         $searchArr = $request->get('search', []);
         $userId = \Auth::user()->id ?? 0;
-        $operations = $this->operationsService->search($searchArr, $userId);
+        $limit = $request->get('limit', 10);
+        $operations = $this->operationsService->search($searchArr, $userId, $limit);
         $categories = $this->categoriesService->searchByUser($userId);
         $summ = $this->operationsService->sum($searchArr, $userId);
 

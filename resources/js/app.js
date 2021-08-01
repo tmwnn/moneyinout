@@ -50,6 +50,7 @@ const App = new Vue({
         add: 0,
         edit: 0,
         page: 1,
+        limit: 10,
         searchString: '',
         operations: {
             data: [],
@@ -190,7 +191,7 @@ const App = new Vue({
         load: function () {
             this.edit = 0;
             this.tableLoading = true;
-            axios.post(loadUrl, {search: this.searchForm, page: this.page, type: this.viewType, group: this.groupType})
+            axios.post(loadUrl, {search: this.searchForm, page: this.page, limit:this.limit, type: this.viewType, group: this.groupType})
                 .then((response) => {
                     this.tableLoading = false;
                     this.operations = response.data.operations;

@@ -229,7 +229,7 @@
 
             {{-- $incomes->links() --}}
             <nav v-if="operations.data.length">
-                <ul class="pagination" v-if="operations.last_page != 1">
+                <ul class="pagination float-left w-75" v-if="operations.last_page != 1" >
                     <li class="page-item" v-if="operations.current_page > 1"><a href="javascript:void(0);" class="page-link" v-on:click.prevent="setPage(1);">&laquo;</a></li>
                     <li class="page-item" v-if="operations.current_page > 3"><a href="javascript:void(0);" class="page-link" v-on:click.prevent="setPage(1);">1</a></li>
                     <li class="page-item" v-if="operations.current_page > 3"><a href="javascript:void(0);" class="page-link">...</a></li>
@@ -242,6 +242,14 @@
                     <li class="page-item" v-if="operations.current_page < operations.last_page"><a href="javascript:void(0);" class="page-link" v-on:click.prevent="setPage(operations.last_page);">@{{ operations.last_page }}</a></li>
                     <li class="page-item" v-if="operations.current_page < operations.last_page"><a href="javascript:void(0);" class="page-link" v-on:click.prevent="setPage(operations.last_page);">&raquo;</a></li>
                 </ul>
+
+                <select class="form-control float-right w-25" style="max-width: 100px" v-model="limit" @change="page=1;load();">
+                    <option value="10">10</option>
+                    <option value="15">15</option>
+                    <option value="30">30</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                </select>
             </nav>
             <div v-else>По вашему запросу ничего не найдено</div>
 

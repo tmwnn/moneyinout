@@ -31,16 +31,16 @@ class CachedOperationRepository implements CachedOperationRepositoryInterface
     }
 
 
-    public function search($filters, $userId)
+    public function search($filters, $userId, $limit = 10)
     {
-        if (!empty($filters) || request()->get('no_cache')) {
+        if (!empty($filters) || request()->get('no_cache') || $limit != 10) {
             // для оптимизации кэшируем только без фильтров
-            return $this->operationRepository->search($filters, $userId);
+            return $this->operationRepository->search($filters, $userId, $limit);
         }
         $key = $this->cacheKeyManager->getSearchOperationsKey(['user_id' => $userId]);
         return Cache::tags([Tag::OPERATIONS])
-            ->remember($key, self::CACHE_SEARCH_SECONDS, function () use ($userId) {
-            return $this->operationRepository->search([], $userId);
+            ->remember($key, self::CACHE_SEARCH_SECONDS, function () use ($userId, $limit) {
+            return $this->operationRepository->search([], $userId, $limit);
         });
     }
 
