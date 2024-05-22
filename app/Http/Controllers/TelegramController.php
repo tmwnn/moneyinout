@@ -74,7 +74,10 @@ class TelegramController extends Controller
                         $comment = $tmpArr[3];
                         $this->addOperation($date, $summ, $comment, $userId);
                         $this->showList([], $userId, $telegramId);
+                    } else {
+                        $this->showList(['searchString' => trim($text)], $userId, $telegramId);
                     }
+                    /*
                     elseif (preg_match('/^(s|search)\s+(.+)$/', $text, $tmpArr)) {
                         $this->showList(['searchString' => $tmpArr[2]], $userId, $telegramId);
                     }
@@ -85,6 +88,7 @@ class TelegramController extends Controller
                             [ 'keyboard' => $keyboard, 'resize_keyboard' => true, 'one_time_keyboard' => false ]
                         );
                     }
+                    */
                 }
             }
         }
