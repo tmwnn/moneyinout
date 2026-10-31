@@ -19,4 +19,6 @@ interface CachedOperationRepositoryInterface
 
     public function getUsersIds();
 
+    public function tags($userId);
+
 }

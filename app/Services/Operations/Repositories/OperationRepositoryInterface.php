@@ -18,6 +18,8 @@ interface OperationRepositoryInterface
 
     public function getUsersIds();
 
+    public function tags(int $userId = 0): array;
+
     public function updateFromArray(int $id, array $data);
 
     public function delete(int $id);

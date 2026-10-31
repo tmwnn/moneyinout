@@ -62,6 +62,7 @@ class DashboardController extends Controller
             'categories' => $categories,
             'search' => $searchArr,
             'summ' => $summ,
+            'tags' => $this->operationsService->tags($userId),
         ];
         $type = $request->get('type' );
         if ($type == 'stat' || $type == 'graph') {

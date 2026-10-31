@@ -137,7 +137,18 @@
                             <input type="text" class="form-control"  v-model="newItem.comment" @keyup.enter="storeRow('{{ route('dashboard.store') }}')"/>
                         </td>
                         <td data-th="Тэги">
-                            <input type="text" class="form-control"  v-model="newItem.tags" @keyup.enter="storeRow('{{ route('dashboard.store') }}')"/>
+                            <div style="position: relative;">
+                                <input type="text" class="form-control" autocomplete="off" v-model="newItem.tags"
+                                       @input="tagIndex = -1; tagsFocus = true"
+                                       @focus="tagsFocus = true"
+                                       @blur="tagsFocus = false; tagIndex = -1"
+                                       @keydown="tagsKeydown($event, '{{ route('dashboard.store') }}')"/>
+                                <div v-if="tagsFocus && tagSuggestions.length" class="dropdown-menu show w-100" style="max-height: 250px; overflow-y: auto;">
+                                    <a v-for="(tag, i) in tagSuggestions" :key="tag" href="javascript:void(0);"
+                                       class="dropdown-item" :class="{active: i === tagIndex}"
+                                       @mousedown.prevent="applyTag(tag)" @mouseover="tagIndex = i">@{{ tag }}</a>
+                                </div>
+                            </div>
                         </td>
                         <td data-th="Ежемесячная">
                             <input type="checkbox"  v-model="newItem.type" value="1"/>

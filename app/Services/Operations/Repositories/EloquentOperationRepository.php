@@ -141,6 +141,24 @@ class EloquentOperationRepository implements OperationRepositoryInterface
     }
 
     /**
+     * Список ранее использованных тегов пользователя (по убыванию частоты)
+     * @param int $userId
+     * @return array
+     */
+    public function tags(int $userId = 0): array
+    {
+        $counts = [];
+        $rows = Operation::where('user_id', $userId)->where('tags', '<>', '')->pluck('tags');
+        foreach ($rows as $row) {
+            foreach (preg_split('/\s+/u', trim((string)$row), -1, PREG_SPLIT_NO_EMPTY) as $tag) {
+                $counts[$tag] = ($counts[$tag] ?? 0) + 1;
+            }
+        }
+        arsort($counts);
+        return array_map('strval', array_keys($counts));
+    }
+
+    /**
      * @return array
      */
     public function getUsersIds(): array

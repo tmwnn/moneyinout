@@ -78,6 +78,17 @@ class OperationsService
 
 
     /**
+     * Ранее использованные теги пользователя
+     * @param integer $userId ид пользователя
+     * @return array
+     */
+    public function tags($userId): array
+    {
+        return $this->cachedRepository->tags($userId);
+    }
+
+
+    /**
      * Сохранение дохода
      * @param array $data
      * @return Operation

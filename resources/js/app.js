@@ -62,6 +62,9 @@ const App = new Vue({
             outcome: 0,
         },
         stat: [],
+        allTags: [],
+        tagsFocus: false,
+        tagIndex: -1,
         newItem: {
             date: typeof(curDate) !== "undefined" ? curDate : new Date().toISOString().substring(0,10),
             summ: 0,
@@ -116,6 +119,24 @@ const App = new Vue({
                 data.push({label: item.name, code: item.id, user_id: item.user_id});
             });
             return data;
+        },
+        tagSuggestions: function () {
+            let value = (this.newItem.tags || '').toString();
+            let parts = value.split(/\s+/);
+            let token = parts[parts.length - 1].toLowerCase();
+            if (!token) {
+                return [];
+            }
+            let used = parts.slice(0, -1).map((t) => t.toLowerCase());
+            return this.allTags.filter((tag) => {
+                let t = tag.toLowerCase();
+                return t !== token && t.indexOf(token) !== -1 && used.indexOf(t) === -1;
+            }).sort((a, b) => {
+                // сначала начинающиеся с введённого текста, далее по частоте (исходный порядок)
+                let sa = a.toLowerCase().indexOf(token) === 0 ? 0 : 1;
+                let sb = b.toLowerCase().indexOf(token) === 0 ? 0 : 1;
+                return sa - sb;
+            }).slice(0, 10);
         },
         xNewDate: {
             get: function () {
@@ -198,6 +219,9 @@ const App = new Vue({
                     this.summ = response.data.summ;
                     this.page = response.data.operations.current_page;
                     this.categories = response.data.categories;
+                    if (Array.isArray(response.data.tags)) {
+                        this.allTags = response.data.tags;
+                    }
                     if (this.viewType == 'graph') {
                         this.stat = response.data.stat;
                         this.loadGraph();
@@ -242,6 +266,35 @@ const App = new Vue({
                 tags: '',
                 type: 0,
             };
+        },
+        applyTag: function (tag) {
+            let parts = (this.newItem.tags || '').toString().split(/\s+/);
+            parts[parts.length - 1] = tag;
+            this.newItem.tags = parts.filter((t) => t !== '').join(' ') + ' ';
+            this.tagIndex = -1;
+        },
+        tagsKeydown: function (e, url) {
+            let list = this.tagsFocus ? this.tagSuggestions : [];
+            if (e.key === 'ArrowDown' && list.length) {
+                e.preventDefault();
+                this.tagIndex = (this.tagIndex + 1) % list.length;
+            } else if (e.key === 'ArrowUp' && list.length) {
+                e.preventDefault();
+                this.tagIndex = this.tagIndex <= 0 ? list.length - 1 : this.tagIndex - 1;
+            } else if (e.key === 'Tab' && list.length) {
+                e.preventDefault();
+                this.applyTag(list[this.tagIndex >= 0 ? this.tagIndex : 0]);
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                if (list.length && this.tagIndex >= 0 && this.tagIndex < list.length) {
+                    this.applyTag(list[this.tagIndex]);
+                } else {
+                    this.storeRow(url);
+                }
+            } else if (e.key === 'Escape') {
+                this.tagsFocus = false;
+                this.tagIndex = -1;
+            }
         },
         saveRow: function (url, id) {
             axios.post(url, this.editItem)

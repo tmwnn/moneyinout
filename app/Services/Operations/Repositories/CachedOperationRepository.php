@@ -58,6 +58,20 @@ class CachedOperationRepository implements CachedOperationRepositoryInterface
     }
 
 
+    /**
+     * Список ранее использованных тегов пользователя
+     * @param int $userId
+     * @return array
+     */
+    public function tags($userId)
+    {
+        $key = $this->cacheKeyManager->getSearchOperationsKey(['user_id' => $userId, 'type' => 'tags']);
+        return Cache::tags([Tag::OPERATIONS])
+            ->remember($key, self::CACHE_SEARCH_SECONDS, function () use ($userId) {
+                return $this->operationRepository->tags((int)$userId);
+            });
+    }
+
     public function clearSearchCache()
     {
         Cache::tags([Tag::OPERATIONS])->flush();
