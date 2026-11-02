@@ -119,30 +119,65 @@
                     {{-- Новая операция --}}
                     <tr>
                         <td data-th="Дата">
-                            <date-picker v-model="xNewDate" :format="'DD.MM.YYYY'" first-day-of-week="1"></date-picker>
+                            <div class="d-flex align-items-center">
+                                <date-picker v-model="xNewDate" :format="'DD.MM.YYYY'" first-day-of-week="1"></date-picker>
+                                <button class="lockBtn btn p-0"
+                                        @click="keepDate = !keepDate"
+                                        title="Сохранять дату" style="font-size: 14px; line-height: 1; border: none; background: none; margin-left: 4px;">
+                                    <i class="fa text-muted" :class="{ 'fa-lock': keepDate, 'fa-unlock-alt': !keepDate }"></i>
+                                </button>
+                            </div>
                         </td>
                         <td data-th="Сумма">
-                            <input type="text" class="form-control" v-model="newItem.summ" @keyup.enter="storeRow('{{ route('dashboard.store') }}')"/>
+                            <div class="d-flex align-items-center">
+                                <input type="text" class="form-control" v-model="newItem.summ" @keyup.enter="storeRow('{{ route('dashboard.store') }}')"/>
+                                <button class="lockBtn btn p-0"
+                                        @click="keepSumm = !keepSumm"
+                                        title="Сохранять сумму" style="font-size: 14px; line-height: 1; border: none; background: none; margin-left: 4px;">
+                                    <i class="fa text-muted" :class="{ 'fa-lock': keepSumm, 'fa-unlock-alt': !keepSumm }"></i>
+                                </button>
+                            </div>
                         </td>
                         <td data-th="Категория">
                            {{-- <input type="text" class="form-control" v-model="newItem.category_id"/>--}}
-                            <v-select :options="categoriesSelect" v-model="xNewCategory" :clearable="false">
-                                <template #option="{ code, label, user_id }">
-                                    <span v-if="!!user_id" class="text-success">@{{ label }}</span>
-                                    <template v-else>@{{ label }}</template>
-                                </template>
-                            </v-select>
+                            <div class="d-flex align-items-center">
+                                <v-select :options="categoriesSelect" v-model="xNewCategory" :clearable="false" class="flex-grow-1">
+                                    <template #option="{ code, label, user_id }">
+                                        <span v-if="!!user_id" class="text-success">@{{ label }}</span>
+                                        <template v-else>@{{ label }}</template>
+                                    </template>
+                                </v-select>
+                                <button class="lockBtn btn p-0"
+                                        @click="keepCategory = !keepCategory"
+                                        title="Сохранять категорию" style="font-size: 14px; line-height: 1; border: none; background: none; margin-left: 4px;">
+                                    <i class="fa text-muted" :class="{ 'fa-lock': keepCategory, 'fa-unlock-alt': !keepCategory }"></i>
+                                </button>
+                            </div>
                         </td>
                         <td data-th="Комментарий">
-                            <input type="text" class="form-control"  v-model="newItem.comment" @keyup.enter="storeRow('{{ route('dashboard.store') }}')"/>
+                            <div class="d-flex align-items-center">
+                                <input type="text" class="form-control"  v-model="newItem.comment" @keyup.enter="storeRow('{{ route('dashboard.store') }}')"/>
+                                <button class="lockBtn btn p-0"
+                                        @click="keepComment = !keepComment"
+                                        title="Сохранять комментарий" style="font-size: 14px; line-height: 1; border: none; background: none; margin-left: 4px;">
+                                    <i class="fa text-muted" :class="{ 'fa-lock': keepComment, 'fa-unlock-alt': !keepComment }"></i>
+                                </button>
+                            </div>
                         </td>
                         <td data-th="Тэги">
                             <div style="position: relative;">
-                                <input type="text" class="form-control" autocomplete="off" v-model="newItem.tags"
-                                       @input="tagIndex = -1; tagsFocus = true"
-                                       @focus="tagsFocus = true"
-                                       @blur="tagsFocus = false; tagIndex = -1"
-                                       @keydown="tagsKeydown($event, '{{ route('dashboard.store') }}')"/>
+                                <div class="d-flex align-items-center">
+                                    <input type="text" class="form-control" autocomplete="off" v-model="newItem.tags"
+                                           @input="tagIndex = -1; tagsFocus = true"
+                                           @focus="tagsFocus = true"
+                                           @blur="tagsFocus = false; tagIndex = -1"
+                                           @keydown="tagsKeydown($event, '{{ route('dashboard.store') }}')"/>
+                                    <button class="lockBtn btn p-0"
+                                            @click="keepTags = !keepTags"
+                                            title="Сохранять теги" style="font-size: 14px; line-height: 1; border: none; background: none; margin-left: 4px;">
+                                        <i class="fa text-muted" :class="{ 'fa-lock': keepTags, 'fa-unlock-alt': !keepTags }"></i>
+                                    </button>
+                                </div>
                                 <div v-if="tagsFocus && tagSuggestions.length" class="dropdown-menu show w-100" style="max-height: 250px; overflow-y: auto;">
                                     <a v-for="(tag, i) in tagSuggestions" :key="tag" href="javascript:void(0);"
                                        class="dropdown-item" :class="{active: i === tagIndex}"
@@ -152,6 +187,11 @@
                         </td>
                         <td data-th="Ежемесячная">
                             <input type="checkbox"  v-model="newItem.type" value="1"/>
+                            <button class="lockBtn btn p-0"
+                                    @click="keepType = !keepType"
+                                    title="Сохранять признак ежемесячной" style="font-size: 14px; line-height: 1; border: none; background: none; margin-left: 4px;">
+                                <i class="fa text-muted" :class="{ 'fa-lock': keepType, 'fa-unlock-alt': !keepType }"></i>
+                            </button>
                         </td>
                         <td>
                             <a href="javascript:void(0);" @click="storeRow('{{ route('dashboard.store') }}')" class="text-success fa fa-2x fa-save" title="Добавить"></a>

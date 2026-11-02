@@ -84,6 +84,12 @@ const App = new Vue({
         catSettings: false,
         newCategory: '',
         filtersSettings: false,
+        keepDate: false,
+        keepSumm: false,
+        keepCategory: false,
+        keepComment: false,
+        keepTags: false,
+        keepType: false,
         searchForm: {
             dateMin: '',
             dateMax: '',
@@ -258,13 +264,14 @@ const App = new Vue({
             ;
         },
         clearNewItem: function () {
+            var defDate = typeof(curDate) !== "undefined" ? curDate : new Date().toISOString().substring(0,10);
             this.newItem = {
-                date: typeof(curDate) !== "undefined" ? curDate : new Date().toISOString().substring(0,10),
-                summ: 0,
-                comment: '',
-                category_id: 0,
-                tags: '',
-                type: 0,
+                date: this.keepDate ? this.newItem.date : defDate,
+                summ: this.keepSumm ? this.newItem.summ : 0,
+                comment: this.keepComment ? this.newItem.comment : '',
+                category_id: this.keepCategory ? this.newItem.category_id : 0,
+                tags: this.keepTags ? this.newItem.tags : '',
+                type: this.keepType ? this.newItem.type : 0,
             };
         },
         applyTag: function (tag) {
