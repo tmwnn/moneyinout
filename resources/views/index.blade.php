@@ -122,6 +122,7 @@
                             <div class="d-flex align-items-center">
                                 <date-picker v-model="xNewDate" :format="'DD.MM.YYYY'" first-day-of-week="1"></date-picker>
                                 <button class="lockBtn btn p-0"
+                                        tabindex="-1"
                                         @click="keepDate = !keepDate"
                                         title="Сохранять дату" style="font-size: 14px; line-height: 1; border: none; background: none; margin-left: 4px;">
                                     <i class="fa text-muted" :class="{ 'fa-lock': keepDate, 'fa-unlock-alt': !keepDate }"></i>
@@ -132,6 +133,7 @@
                             <div class="d-flex align-items-center">
                                 <input type="text" class="form-control" v-model="newItem.summ" @keyup.enter="storeRow('{{ route('dashboard.store') }}')"/>
                                 <button class="lockBtn btn p-0"
+                                        tabindex="-1"
                                         @click="keepSumm = !keepSumm"
                                         title="Сохранять сумму" style="font-size: 14px; line-height: 1; border: none; background: none; margin-left: 4px;">
                                     <i class="fa text-muted" :class="{ 'fa-lock': keepSumm, 'fa-unlock-alt': !keepSumm }"></i>
@@ -148,6 +150,7 @@
                                     </template>
                                 </v-select>
                                 <button class="lockBtn btn p-0"
+                                        tabindex="-1"
                                         @click="keepCategory = !keepCategory"
                                         title="Сохранять категорию" style="font-size: 14px; line-height: 1; border: none; background: none; margin-left: 4px;">
                                     <i class="fa text-muted" :class="{ 'fa-lock': keepCategory, 'fa-unlock-alt': !keepCategory }"></i>
@@ -158,6 +161,7 @@
                             <div class="d-flex align-items-center">
                                 <input type="text" class="form-control"  v-model="newItem.comment" @keyup.enter="storeRow('{{ route('dashboard.store') }}')"/>
                                 <button class="lockBtn btn p-0"
+                                        tabindex="-1"
                                         @click="keepComment = !keepComment"
                                         title="Сохранять комментарий" style="font-size: 14px; line-height: 1; border: none; background: none; margin-left: 4px;">
                                     <i class="fa text-muted" :class="{ 'fa-lock': keepComment, 'fa-unlock-alt': !keepComment }"></i>
@@ -173,6 +177,7 @@
                                            @blur="tagsFocus = false; tagIndex = -1"
                                            @keydown="tagsKeydown($event, '{{ route('dashboard.store') }}')"/>
                                     <button class="lockBtn btn p-0"
+                                            tabindex="-1"
                                             @click="keepTags = !keepTags"
                                             title="Сохранять теги" style="font-size: 14px; line-height: 1; border: none; background: none; margin-left: 4px;">
                                         <i class="fa text-muted" :class="{ 'fa-lock': keepTags, 'fa-unlock-alt': !keepTags }"></i>
@@ -188,6 +193,7 @@
                         <td data-th="Ежемесячная">
                             <input type="checkbox"  v-model="newItem.type" value="1"/>
                             <button class="lockBtn btn p-0"
+                                    tabindex="-1"
                                     @click="keepType = !keepType"
                                     title="Сохранять признак ежемесячной" style="font-size: 14px; line-height: 1; border: none; background: none; margin-left: 4px;">
                                 <i class="fa text-muted" :class="{ 'fa-lock': keepType, 'fa-unlock-alt': !keepType }"></i>
